@@ -1,4 +1,4 @@
-import AnalToys from "../assets/AnalToys.png";
+import AnalToys from "../assets/Analtoys.png";
 import BDSMToys from "../assets/BDSMToys.png";
 import BDSMToys2 from "../assets/BDSMToys2.png";
 import ChastityCage from "../assets/ChastityCage.png";
