@@ -1,0 +1,118 @@
+.new-launches-section {
+    background-color: #fff;
+    font-family: 'Poppins', sans-serif;
+  }
+  
+  .launch-card {
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    border-radius: 14px !important;
+    transition: all 0.3s ease;
+  }
+  
+  .launch-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3) !important;
+  }
+  
+  .img-wrapper {
+    width: 100%;
+    padding: 8px;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .img-wrapper img {
+    width: 243px;
+    height: 243px;
+    object-fit: cover;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+  }
+  
+  .product-name {
+    font-size: 0.90rem !important;
+    font-family: "Jost" !important;
+    font-weight: 600 !important;
+    color: #000;
+    margin-bottom: 8px;
+  }
+  
+  .price-section {
+    font-size: 0.9rem;
+  }
+  
+  .markprice {
+    text-decoration: line-through;
+    color: #777;
+    margin-right: 4px;
+    font-weight: 600;
+  }
+  
+  .price {
+    color: #99497C;
+    font-weight: 600;
+  }
+  
+  .discount {
+    font-size: 0.85rem;
+    font-weight: 600;
+  }
+  
+  .add-btn {
+    background-color:var(--color-primary) !important;
+    border: none !important;
+    font-weight: 500;
+    width: 100%;
+    padding: 10px 0px !important;
+    border-radius: 50px !important;
+  }
+  
+  .add-btn:hover {
+    background-color: var( --color-primary-dark) !important;
+  }
+  
+  .view-all-btn {
+    background-color: var(--color-primary) !important;
+    border: none !important;
+    font-weight: 500;
+    padding: 8px 40px !important;
+    border-radius: 10px !important;
+  }
+  
+  .view-all-btn:hover {
+    background-color: var(--color-primary-dark) !important;
+  }
+  
+
+  /* ========================================= */
+/* Add-to-Cart / Go-to-Cart Button Animation */
+/* ========================================= */
+
+.add-btn {
+  background-color: #a60063;
+  border: none;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  border-radius: 8px;
+  padding: 8px 16px;
+}
+
+.add-btn:hover {
+  background-color: #8c0055;
+}
+
+/* ✅ When switched to Go to Cart */
+.goto-cart {
+  background-color: #008f39 !important;
+  color: white !important;
+  transform: scale(1.05);
+  box-shadow: 0 0 8px rgba(0, 143, 57, 0.4);
+  transition: all 0.3s ease-in-out;
+}
+
+.goto-cart:hover {
+  background-color: #007a30 !important;
+  transform: scale(1.08);
+}

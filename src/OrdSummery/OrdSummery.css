@@ -1,0 +1,133 @@
+.order-success-section {
+    background: #fff;
+    min-height: 100vh;
+    font-family: "Plus Jakarta Sans", sans-serif;
+  }
+  
+  /* ---------- LEFT SIDE ---------- */
+  .thankyou-box {
+    padding: 20px 10px;
+  }
+  
+  .thankyou-box h2 {
+    font-size: 26px;
+    color: #000;
+  }
+  
+  .thankyou-box p {
+    font-size: 14px;
+    color: #555;
+  }
+  
+  .billing-info p {
+    font-size: 14px;
+    color: #444;
+  }
+  
+  .track-btn {
+    background-color: var(--color-primary) !important;
+    border: none !important;
+    padding: 10px 25px !important;
+    font-weight: 600;
+    font-size: 14px;
+    transition: all 0.3s ease;
+  }
+  
+  .track-btn:hover {
+    background-color: var(--color-primary-dark) !important;
+  }
+  
+  /* ---------- RIGHT SIDE ---------- */
+  .receipt-wrapper {
+    position: relative;
+    background-color: #f9f9f9;
+    border-radius: 12px;
+    padding: 5px;
+  }
+  
+  .receipt-card {
+    border: none !important;
+    border-radius: 12px;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  .receipt-header {
+    background-color: #f3bfd5;
+    border-bottom: 1px solid #e6a8c4;
+    text-align: center;
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+    padding: 12px;
+  }
+  
+  .product-image {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 6px;
+  }
+  
+  /* Add tear-effect bottom edge */
+  .receipt-card::after {
+    content: "";
+    position: absolute;
+    bottom: -8px;
+    left: 0;
+    width: 100%;
+    height: 8px;
+    background: repeating-linear-gradient(
+      -45deg,
+      #fff 0px,
+      #fff 5px,
+      transparent 5px,
+      transparent 10px
+    );
+  }
+  
+  @media (max-width: 768px) {
+    .thankyou-box {
+      text-align: center;
+    }
+  
+    .receipt-wrapper {
+      margin-top: 30px;
+    }
+  
+    .track-btn {
+      width: 100%;
+    }
+  }
+  
+
+  /* ✅ Scrollable Product List inside Order Summary */
+.scrollable-product-list {
+  max-height: 180px; /* Only 3 items visible approx */
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-right: 6px;
+}
+
+/* ✅ Custom scrollbar styling */
+.scrollable-product-list::-webkit-scrollbar {
+  width: 8px;
+}
+
+.scrollable-product-list::-webkit-scrollbar-track {
+  background: #f3f3f3;
+  border-radius: 10px;
+}
+
+.scrollable-product-list::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #d17aa0, #c94a7c);
+  border-radius: 10px;
+}
+
+.scrollable-product-list::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #c94a7c, #a73e67);
+}
+
+/* ✅ Firefox scrollbar */
+.scrollable-product-list {
+  scrollbar-color: #c94a7c #f3f3f3;
+  scrollbar-width: thin;
+}

@@ -1,0 +1,140 @@
+.billing-section {
+    background-color: #fff;
+    min-height: 100vh;
+    font-family: "Plus Jakarta Sans", sans-serif;
+  }
+  
+  .section-title {
+    font-weight: 600;
+    color: #333;
+  }
+  
+  .breadcrumb-text {
+    color: #777;
+    font-size: 14px;
+  }
+  
+  .breadcrumb-text span {
+    color: #c94a7c;
+    font-weight: 600;
+  }
+  
+  /* Card Header */
+  .card-header-custom {
+    background-color: var(--color-category-bg);
+    border-top-right-radius: 10px;
+    padding: 10px 15px;
+    border-bottom: 1px solid #e6a8c4;
+  }
+  
+
+  /* Billing Table */
+  .order-table th {
+    background-color: #f9e6f0;
+    font-weight: 600;
+    text-align: center;
+  }
+  
+  .order-table td {
+    vertical-align: middle;
+    text-align: center;
+  }
+  
+  .product-image {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 5px;
+  }
+  
+ 
+  
+  .payment-card .form-check-label {
+    font-size: 15px;
+    color: #333;
+  }
+
+  .billing-card{
+    border: none;
+    border-radius: 10px !important;
+    background-color: #fff !important;
+    overflow: hidden !important;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08) !important;
+  }
+  
+  .payment-card textarea {
+    border-radius: 10px;
+    resize: none;
+  }
+  
+  /* Confirm Button */
+  .confirm-btn {
+    background-color: var(--color-primary) !important;
+    border: none !important;
+    border-radius: 25px;
+    padding: 10px 20px;
+    font-weight: 600;
+    transition: all 0.2s ease;
+  }
+  
+  .confirm-btn:hover {
+    background-color: var(--color-primary-dark) !important;
+  }
+  
+  /* Delivery Info */
+  .text-danger {
+    color: #c94a7c !important;
+  }
+  
+  /* Responsive */
+  @media (max-width: 768px) {
+    .order-table td,
+    .order-table th {
+      font-size: 13px;
+    }
+  
+    .product-image {
+      width: 50px;
+      height: 50px;
+    }
+  }
+  
+
+  .deliverto{
+    color: var(--color-primary);
+    font-weight: 600;
+  }
+
+  /* ✅ Scrollable Table Container */
+.table-scroll-container {
+  max-height: 300px; /* shows about 3–4 rows */
+  overflow-y: auto;
+  overflow-x: hidden;
+  border-radius: 10px;
+  padding-right: 6px;
+}
+
+/* ✅ Custom Scrollbar Styling */
+.table-scroll-container::-webkit-scrollbar {
+  width: 8px;
+}
+
+.table-scroll-container::-webkit-scrollbar-track {
+  background: #f3f3f3;
+  border-radius: 10px;
+}
+
+.table-scroll-container::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #d17aa0, #c94a7c);
+  border-radius: 10px;
+}
+
+.table-scroll-container::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #c94a7c, #a73e67);
+}
+
+/* ✅ Smooth scrollbar for Firefox */
+.table-scroll-container {
+  scrollbar-color: #c94a7c #f3f3f3;
+  scrollbar-width: thin;
+}

@@ -1,0 +1,197 @@
+.track-section {
+    background: #fff;
+    min-height: 100vh;
+    font-family: "Plus Jakarta Sans", sans-serif;
+  }
+  
+  .breadcrumb-text {
+    color: #777;
+    font-size: 14px;
+  }
+  
+  .breadcrumb-text span {
+    color: #c94a7c;
+    font-weight: 600;
+  }
+  
+  /* CARD */
+  .tracking-card {
+    border: none;
+    border-radius: 10px;
+    padding: 15px;
+  }
+  
+  /* ✅ Progress Tracker */
+  .progress-tracker {
+    position: relative;
+    margin: 40px 0;
+  }
+  
+  .tracker-step {
+    text-align: center;
+    flex: 1;
+    position: relative;
+  }
+  
+  .tracker-icon {
+    font-size: 24px;
+    color: #ccc;
+    background: #f3f3f3;
+    border-radius: 50%;
+    padding: 8px;
+    width: 42px;
+    height: 42px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: auto;
+  }
+  
+  .tracker-label {
+    font-size: 13px;
+    margin-top: 6px;
+    color: #777;
+  }
+  
+  /* ✅ Completed Step */
+  .tracker-step.completed .tracker-icon {
+    background: #28a745;
+    color: #fff;
+    box-shadow: 0 0 10px rgba(40, 167, 69, 0.3);
+  }
+  
+  .tracker-step.completed .tracker-label {
+    color: #28a745;
+    font-weight: 600;
+  }
+  
+  /* ✅ Progress Line */
+  .progress-line {
+    width: 100%;
+    height: 5px;
+    background: #ccc;
+    position: relative;
+    top: -20px;
+    margin: 0 5px;
+    border-radius: 10px;
+  }
+  
+  .progress-line.completed {
+    background: #28a745;
+  }
+  
+  /* ✅ Product Info */
+  .product-box {
+    flex: 1;
+    max-height: 400px; /* optional limit */
+    overflow-y: auto; /* scroll when too long */
+    padding-right: 10px;
+  }
+
+  .product-box h6{
+    color: var(--color-primary) !important;
+  }
+  
+  .product-image {
+    width: 70px;
+    height: 70px;
+    border-radius: 8px;
+    object-fit: cover;
+  }
+  
+  /* ✅ Responsive */
+  @media (max-width: 768px) {
+    .progress-tracker {
+      flex-direction: column;
+      gap: 15px;
+    }
+    .progress-line {
+      display: none;
+    }
+  }
+  
+
+  /* Existing styles from before remain same */
+
+/* ✅ Address Box */
+.address-box {
+  align-self: flex-start !important; /* prevents stretch */
+  height: fit-content; /* only as tall as its content */
+  background-color: #f8f9fa;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.08);
+}
+  
+  .address-box h6 {
+    font-size: 15px;
+    color: var(--color-primary) !important;
+  }
+  
+
+  /* ✅ Order Summary Styling */
+.order-summary {
+  font-family: "Plus Jakarta Sans", sans-serif;
+}
+
+.order-summary hr {
+  margin: 8px 0;
+  opacity: 0.3;
+}
+
+.order-summary .small {
+  color: #444;
+}
+
+.order-summary .fw-bold {
+  font-size: 16px;
+}
+
+.order-summary span:last-child {
+  font-weight: 500;
+}
+
+/* ✅ Product Info Section - Scrollable */
+.product-box {
+  flex: 1;
+  max-height: 290px;/* only 3 products visible */
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-right: 8px;
+  border-radius: 8px;
+}
+
+/* ✅ Custom Scrollbar Styling */
+.product-box::-webkit-scrollbar {
+  width: 8px;
+}
+
+.product-box::-webkit-scrollbar-track {
+  background: #f3f3f3;
+  border-radius: 10px;
+}
+
+.product-box::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #d17aa0, #c94a7c);
+  border-radius: 10px;
+}
+
+.product-box::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #c94a7c, #a73e67);
+}
+
+/* ✅ Smooth Scrollbar for Firefox */
+.product-box {
+  scrollbar-color: #c94a7c #f3f3f3;
+  scrollbar-width: thin;
+}
+
+/* ✅ Product Title and Image */
+.product-box h6 {
+  color: var(--color-primary) !important;
+}
+
+.product-image {
+  width: 70px;
+  height: 70px;
+  border-radius: 8px;
+  object-fit: cover;
+}

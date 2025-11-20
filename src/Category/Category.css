@@ -1,0 +1,268 @@
+.category-section {
+  max-width: 1200px;
+  margin: auto;
+  padding: 30px 20px;
+  width: 100%;
+}
+
+.category-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  grid-template-rows: repeat(2, 1fr);
+  gap: 40px;
+  width: 100%;
+}
+
+/* Default structure: 5 items top row, 5 bottom row reversed */
+.div1 {
+  grid-row: span 2 / span 2;
+}
+.div2 {
+  grid-row: span 2 / span 2;
+}
+.div3 {
+  grid-row: span 2 / span 2;
+}
+.div4 {
+  grid-row: span 2 / span 2;
+}
+.div5 {
+  grid-row: span 2 / span 2;
+}
+
+/* Second row (reverse order) */
+.div6 {
+  grid-row: span 2 / span 2;
+  grid-column-start: 5;
+  grid-row-start: 3;
+}
+.div7 {
+  grid-row: span 2 / span 2;
+  grid-column-start: 4;
+  grid-row-start: 3;
+}
+.div8 {
+  grid-row: span 2 / span 2;
+  grid-column-start: 3;
+  grid-row-start: 3;
+}
+.div9 {
+  grid-row: span 2 / span 2;
+  grid-column-start: 2;
+  grid-row-start: 3;
+}
+.div10 {
+  grid-row: span 2 / span 2;
+  grid-column-start: 1;
+  grid-row-start: 3;
+}
+
+/* Image container */
+.category-img-wrap {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 130px;
+  background: #fff;
+  border-radius: 8px;
+  width: 100%;
+}
+
+.category-img {
+  width: 150px;
+  height: 150px;
+  object-fit: contain;
+  transition: transform 0.3s ease;
+}
+
+.category-img:hover {
+  transform: scale(1.05);
+}
+
+/* Extra Large Screens (1200px+) */
+@media (min-width: 1200px) {
+  .category-section {
+    max-width: 1170px;
+    padding: 40px 30px;
+  }
+  
+  .category-grid {
+    gap: 50px;
+  }
+  
+  .category-img-wrap {
+    height: 150px;
+  }
+  
+  .category-img {
+    width: 170px;
+    height: 170px;
+  }
+}
+
+/* Large Screens (992px - 1199px) */
+@media (min-width: 992px) and (max-width: 1199px) {
+  .category-section {
+    max-width: 1000px;
+    padding: 30px 25px;
+  }
+  
+  .category-grid {
+    gap: 35px;
+  }
+  
+  .category-img-wrap {
+    height: 120px;
+  }
+  
+  .category-img {
+    width: 130px;
+    height: 130px;
+  }
+}
+
+/* Medium Screens (768px - 991px) */
+@media (max-width: 991px) {
+  .category-section {
+    max-width: 800px;
+    padding: 25px 20px;
+  }
+  
+  .category-grid {
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: auto;
+    gap: 30px;
+  }
+  
+  /* Reset all grid positions for tablet */
+  .div1, .div2, .div3, .div4, .div5,
+  .div6, .div7, .div8, .div9, .div10 {
+    grid-row: auto !important;
+    grid-column: auto !important;
+    grid-row-start: auto !important;
+    grid-column-start: auto !important;
+  }
+  
+  .category-img-wrap {
+    height: 110px;
+  }
+  
+  .category-img {
+    width: 120px;
+    height: 120px;
+  }
+}
+
+/* Small Screens (576px - 767px) */
+@media (max-width: 767px) {
+  .category-section {
+    max-width: 600px;
+    padding: 20px 15px;
+  }
+  
+  .category-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 25px;
+  }
+  
+  .category-img-wrap {
+    height: 100px;
+  }
+  
+  .category-img {
+    width: 100px;
+    height: 100px;
+  }
+}
+
+/* Extra Small Screens (480px - 575px) */
+@media (max-width: 575px) {
+  .category-section {
+    padding: 20px 12px;
+  }
+  
+  .category-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+  
+  .category-img-wrap {
+    height: 90px;
+  }
+  
+  .category-img {
+    width: 90px;
+    height: 90px;
+  }
+}
+
+/* Very Small Screens (375px - 479px) */
+@media (max-width: 479px) {
+  .category-section {
+    padding: 15px 10px;
+  }
+  
+  .category-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+  }
+  
+  .category-img-wrap {
+    height: 80px;
+  }
+  
+  .category-img {
+    width: 80px;
+    height: 80px;
+  }
+}
+
+/* Extra Extra Small Screens (under 375px) */
+@media (max-width: 374px) {
+  .category-section {
+    padding: 12px 8px;
+  }
+  
+  .category-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+  
+  .category-img-wrap {
+    height: 70px;
+  }
+  
+  .category-img {
+    width: 70px;
+    height: 70px;
+  }
+}
+
+/* Mobile Landscape Orientation */
+@media (max-height: 500px) and (orientation: landscape) {
+  .category-section {
+    padding: 20px 15px;
+  }
+  
+  .category-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+  }
+  
+  .category-img-wrap {
+    height: 80px;
+  }
+  
+  .category-img {
+    width: 80px;
+    height: 80px;
+  }
+}
+
+/* High-DPI Screens */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  .category-img {
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: crisp-edges;
+  }
+}

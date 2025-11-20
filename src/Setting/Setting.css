@@ -1,0 +1,80 @@
+/* ==========================
+   SETTINGS PAGE STYLES
+   ========================== */
+
+   .setting-section {
+    background-color: #fff;
+    min-height: 100vh;
+    font-family: "Plus Jakarta Sans", sans-serif;
+    margin-top: 40px;
+
+  }
+
+
+  
+  /* ====== CARD ====== */
+  .setting-card {
+    border: none;
+    border-radius: 10px !important;
+    background-color: #fff;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+    max-width: 420px;
+    margin: auto;
+  }
+  
+  /* Header bar (same as other pages) */
+  .card-header-custom {
+    background-color: var(--color-category-bg);
+    padding: 15px 10px !important;
+    border-bottom: 1px solid #e6a8c4;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+  }
+  
+  .card-header-custom h5 {
+    font-weight: 600;
+    margin: 0;
+  }
+  
+  /* ====== INPUTS ====== */
+  .setting-card .form-control {
+    border-radius: 8px;
+    padding: 10px;
+    font-size: 14px;
+  }
+  
+  /* ====== BUTTON ====== */
+  .submit-btn {
+    background-color: var(--color-primary) !important;
+    border: none !important;
+    border-radius: 20px;
+    padding: 8px 25px;
+    font-weight: 600;
+    transition: all 0.2s ease;
+  }
+  
+  .submit-btn:hover {
+    background-color: var(--color-primary-dark) !important;
+  }
+  
+  /* ====== LINK ====== */
+  .change-password {
+    color: var(--color-primary);
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 14px;
+    transition: all 0.2s ease;
+  }
+  
+  .change-password:hover {
+    text-decoration: underline;
+    color: var(--color-primary-dark);
+  }
+  
+  /* ====== RESPONSIVE ====== */
+  @media (max-width: 768px) {
+    .setting-card {
+      max-width: 90%;
+    }
+  }
+  

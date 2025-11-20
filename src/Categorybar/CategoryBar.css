@@ -1,0 +1,62 @@
+
+.category-bar {
+    background-color: var(--color-category-bg); /* Light pink like your image */
+    padding: 15px 15px;
+  }
+  
+  .category-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap; /* ✅ allows wrapping on small screens */
+    gap: 20px;
+  }
+  
+  .category-link {
+    color: #fff !important;
+    font-weight: 500;
+    font-size: 18px;
+    font-family: 'Playwrite US Modern', sans-serif;
+    text-decoration: none !important;
+    padding: 8px 16px;
+    transition: color 0.3s ease, border-bottom 0.3s ease;
+  }
+  
+  .category-link:hover {
+    color: #000 !important;
+  }
+  
+  .category-link.active {
+    font-weight: 600;
+    color: #000 !important;
+  }
+  
+  /* Responsive */
+  @media (max-width: 768px) {
+    .category-bar {
+      padding: 6px 0;
+    }
+  
+    .category-link {
+      font-size: 13px;
+      padding: 3px 6px;
+    }
+  
+    .category-nav {
+      gap: 12px;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .category-nav {
+      flex-direction: column;
+      gap: 8px;
+    }
+  
+    .category-link {
+      display: block;
+      text-align: center;
+    }
+  }
+  
+  

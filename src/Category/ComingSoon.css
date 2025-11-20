@@ -1,0 +1,27 @@
+.coming-soon-container {
+    text-align: center;
+    padding: 60px 20px;
+    animation: fadeIn 0.8s ease-in-out;
+  }
+  
+  .coming-soon-container h1 {
+    font-size: 3rem;
+    font-weight: bold;
+  }
+  
+  .coming-soon-container p {
+    font-size: 1.2rem;
+    margin-top: 10px;
+    color: #555;
+  }
+  
+  .coming-soon-img {
+    width: 280px;
+    margin-top: 20px;
+  }
+  
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  

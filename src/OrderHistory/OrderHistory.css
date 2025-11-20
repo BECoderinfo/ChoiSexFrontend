@@ -1,0 +1,95 @@
+.order-history-section {
+    background: #fff;
+    min-height: 100vh;
+    font-family: "Plus Jakarta Sans", sans-serif;
+}
+
+.order-card {
+    border: none;
+    border-radius: 10px;
+    overflow: hidden;
+    background-color: #fff;
+}
+
+.product-image {
+    width: 65px;
+    height: 65px;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+/* ✅ Scrollable Product List */
+.scrollable-product-list {
+    max-height: 200px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding-right: 6px;
+}
+
+/* ✅ Custom Scrollbar */
+.scrollable-product-list::-webkit-scrollbar {
+    width: 8px;
+}
+
+.scrollable-product-list::-webkit-scrollbar-track {
+    background: #f3f3f3;
+    border-radius: 10px;
+}
+
+.scrollable-product-list::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, #d17aa0, #c94a7c);
+    border-radius: 10px;
+}
+
+.scrollable-product-list::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(180deg, #c94a7c, #a73e67);
+}
+
+.scrollable-product-list {
+    scrollbar-color: #c94a7c #f3f3f3;
+    scrollbar-width: thin;
+}
+
+/* ✅ Address Box */
+.address-box {
+    background: #f8f9fa;
+    border: 1px solid #e6e6e6;
+}
+
+.status-badge {
+    padding: 2px 8px;
+    border-radius: 20px;
+    font-size: 12px;
+}
+
+.status-badge.confirmed {
+    background-color: #d1f3da;
+    color: #1a7b31;
+    font-weight: 600;
+}
+
+.status-badge.pending {
+    background-color: #fff3cd;
+    color: #856404;
+    font-weight: 600;
+}
+
+/* ✅ Responsive */
+@media (max-width: 768px) {
+    .product-image {
+        width: 55px;
+        height: 55px;
+    }
+
+    .order-summary-actions {
+        margin-top: 10px;
+    }
+}
+
+
+.track-btn {
+    background-color: var(--color-primary) !important;
+    border: none !important;
+    font-weight: 500;
+    border-radius: 10px !important;
+}

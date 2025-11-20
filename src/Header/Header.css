@@ -1,0 +1,195 @@
+.custom-header {
+    background-color: var(--color-header-bg);
+    padding: 8px 20px;
+  }
+  
+  .header-inner {
+    min-height: 48px;
+  }
+  
+  .logo-img {
+    height: 40px;
+    width: auto;
+    display: block;
+  }
+  
+  /* Search Section */
+  .search-section {
+    flex: 1;
+    max-width: 500px;
+    margin: 0 20px;
+  }
+  
+  .search-wrapper {
+    width: 100%;
+    margin-right: 8px;
+  }
+  
+  .search-icon {
+    position: absolute;
+    top: 44%;
+    left: 10px;
+    transform: translateY(-50%);
+    color: #6c757d;
+    pointer-events: none;
+  }
+  
+  .search-input {
+    border: none !important;
+    padding: 8px 36px 8px 42px !important; /* more left space for icon */
+    font-size: 14px;
+    width: 100%;
+    outline: none;
+  }
+
+  .search-input:focus {
+    box-shadow: 0 0 0 2px rgba(140, 37, 85, 0.25);
+  }
+  
+  /* ✅ Buttons: perfectly centered content */
+  .search-btn,
+  .cart-btn,
+  .login-btn {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
+  }
+  
+  /* Search Button */
+  .search-btn {
+    background-color: var(--color-primary) !important;
+    border: none !important;
+    color: #fff;
+    font-weight: 500;
+    padding: 8px 18px !important;
+    border-radius: 999px;
+    line-height: normal;
+  }
+  
+  .search-btn:hover {
+    background-color: var(--color-primary-dark) !important;
+  }
+  
+  /* Header Buttons */
+  .header-buttons {
+    display: flex;
+    gap: 10px;
+  }
+  
+  /* Cart Button */
+  .cart-btn {
+    background-color: var(--color-primary) !important;
+    border: none !important;
+    border-radius: 10px;
+    padding: 9px 10px !important;
+    color: white;
+    width: 40px;
+    height: 40px;
+  }
+  
+  .cart-btn:hover {
+    background-color: var(--color-primary-dark) !important;
+  }
+  
+  /* Login Button */
+  .login-btn {
+    background-color: var(--color-primary) !important;
+    border: none !important;
+    color: white;
+    font-weight: 500;
+    padding: 8px 16px !important;
+    border-radius: 10px;
+    line-height: normal;
+    height: 40px;
+  }
+  
+  .login-btn:hover {
+    background-color: var(--color-primary-dark) !important;
+  }
+  
+  /* Responsive */
+  @media (max-width: 768px) {
+    .search-section {
+      max-width: 300px;
+    }
+  
+    .logo {
+      font-size: 18px;
+    }
+  
+    .search-btn,
+    .login-btn {
+      padding: 5px 10px !important;
+      height: 36px;
+    }
+  
+    .cart-btn {
+      width: 36px;
+      height: 36px;
+    }
+  }
+  
+  .cart-count-badge {
+    position: absolute;
+    top: 8px;
+    right: 175px;
+    background: white;
+    color: var(--color-primary);
+    font-weight: 900;
+    font-size: 12px;
+    width: 20px;
+    border-radius: 50%;
+  }
+  
+  /* Wrapper */
+.header-user-dropdown {
+  position: relative;
+  cursor: pointer;
+}
+
+/* Clickable button with same look */
+.header-user-toggle {
+  background: var(--color-primary);
+  padding: 8px 16px;
+  border-radius: 10px;
+  font-weight: 600;
+  color: white;
+}
+
+/* Dropdown Menu */
+.user-dropdown-menu {
+  position: absolute;
+  top: 45px;
+  right: 0;
+  background: #fff;
+  width: 180px;
+  border-radius: 10px;
+  border: 1px solid #ddd;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.12);
+  z-index: 999;
+}
+
+/* Dropdown item */
+.user-dropdown-menu .dropdown-item {
+  padding: 4px 15px;
+  font-size: 14px;
+  transition: 0.2s;
+  color: #333;
+}
+
+.user-dropdown-menu .dropdown-item:hover {
+  background: #f3f3f3;
+  border-radius: 10px;
+}
+
+/* Logout Item */
+.user-dropdown-menu .logout {
+  color: var(--color-primary);
+  font-weight: 600;
+  font-size: 18px;
+}
+
+.user-dropdown-menu .logout:hover {
+  background: #ffeaea;
+}
