@@ -15,7 +15,7 @@ import SetPassWord from './SetPassWord/SetPassWord'
 import ViewAllProducts from './Viewall/ViewAllProducts'
 import CategoryPage from './Category/CategoryPage'
 import Delevery from './Delevery/Delevery'
-import CnforderOtp from "./Cnforderotp/CnforderOtp.jsx";
+import CnforderOtp from "./Cnforderotp/Cnforderotp.jsx";
 import Billing from './Billing/Billing'
 import OrdSummery from './OrdSummery/OrdSummery'
 import Track from './Track/Track'
