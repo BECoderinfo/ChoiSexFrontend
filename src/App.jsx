@@ -15,8 +15,8 @@ import SetPassWord from './SetPassWord/SetPassWord'
 import ViewAllProducts from './Viewall/ViewAllProducts'
 import CategoryPage from './Category/CategoryPage'
 import Delevery from './Delevery/Delevery'
+import CnforderOtp from "./Cnforderotp/CnforderOtp.jsx";
 import Billing from './Billing/Billing'
-import Cnforderotp from './Cnforderotp/cnforderotp'
 import OrdSummery from './OrdSummery/OrdSummery'
 import Track from './Track/Track'
 import OrderHistory from './OrderHistory/OrderHistory'
@@ -39,7 +39,7 @@ function App() {
             <Route path="/view-all" element={<ViewAllProducts />} />
             <Route path="/delivery" element={<Delevery />} />
             <Route path='/billing' element={<Billing/>}/>
-            <Route path='/cnforderotp' element={<Cnforderotp/>}/>
+            <Route path='/cnforderotp' element={<CnforderOtp/>}/>
             <Route path='/ordsummery' element={<OrdSummery/>} />
           <Route path='/track/:orderId?' element={<Track/>}/>
             <Route path='/orderHistory' element={<OrderHistory/>} />
