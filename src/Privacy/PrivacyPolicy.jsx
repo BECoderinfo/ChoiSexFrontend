@@ -2,6 +2,7 @@ import React from "react";
 import { Container, Card } from "react-bootstrap";
 import { Lock } from "lucide-react";
 import "./Policy.css";
+import { NavLink } from "react-router-dom";
 
 const PrivacyPolicy = () => {
   return (
@@ -52,7 +53,7 @@ const PrivacyPolicy = () => {
 
             <p className="footer-texts">
               For any privacy related questions, please{" "}
-              <a href="/contact-us" className="link-style">contact us here</a>.
+              <NavLink to="/contact-us" className="link-style">contact us here</NavLink>.
             </p>
           </Card.Body>
         </Card>

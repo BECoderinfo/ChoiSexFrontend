@@ -2,6 +2,7 @@ import React from "react";
 import { Container, Card } from "react-bootstrap";
 import { Truck } from "lucide-react";
 import "./Policy.css";
+import { NavLink } from "react-router-dom";
 
 const ShippingPolicy = () => {
   return (
@@ -47,9 +48,9 @@ const ShippingPolicy = () => {
 
             <p className="footer-texts">
               For any delivery related questions, please{" "}
-              <a href="/contact-us" className="link-style">
+              <NavLink to="/contact-us" className="link-style">
                 contact our support team
-              </a>
+              </NavLink>
               .
             </p>
           </Card.Body>

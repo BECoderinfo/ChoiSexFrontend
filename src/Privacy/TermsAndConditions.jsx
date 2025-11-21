@@ -2,6 +2,7 @@ import React from "react";
 import { Container, Card } from "react-bootstrap";
 import { FileText } from "lucide-react";
 import "./Policy.css";
+import { NavLink } from "react-router-dom";
 
 const TermsAndConditions = () => {
   return (
@@ -55,7 +56,7 @@ const TermsAndConditions = () => {
 
             <p className="footer-texts">
               If you have any queries regarding these terms, please{" "}
-              <a href="/contact-us" className="link-style">contact our support team</a>.
+              <NavLink to="/contact-us" className="link-style">contact our support team</NavLink>.
             </p>
           </Card.Body>
         </Card>
