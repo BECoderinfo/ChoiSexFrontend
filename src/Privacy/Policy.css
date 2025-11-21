@@ -1,0 +1,111 @@
+/* Background Gradient */
+.policy-background {
+    background: linear-gradient(135deg, #fafafa, #e9eef5);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+  }
+  
+  /* Layout */
+  .policy-wrapper {
+    padding: 70px 10px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+  }
+  
+  /* Card Styling */
+  .policy-card {
+    max-width: 900px;
+    width: 100%;
+    border-radius: 20px !important;
+    padding: 35px 45px;
+    background: #ffffff;
+    position: relative;
+  }
+  
+  .elegant-shadow {
+    box-shadow: 0px 8px 30px rgba(0, 0, 0, 0.12);
+    transition: 0.3s;
+  }
+  
+  .elegant-shadow:hover {
+    transform: translateY(-4px);
+    box-shadow: 0px 12px 35px rgba(0, 0, 0, 0.18);
+  }
+  
+  /* Header */
+  .policy-header {
+    text-align: center;
+    margin-bottom: 25px;
+  }
+  
+  .icon-box {
+    width: 60px;
+    height: 60px;
+    background: var(--color-category-bg);
+    border-radius: 50%;
+    margin: 0 auto 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: var(--color-primary);
+  }
+  
+  .policy-header h2 {
+    margin: 10px 0;
+    font-size: 30px;
+    font-weight: 700;
+  }
+  
+  .update-text {
+    font-size: 14px;
+    color: #6c757d;
+  }
+  
+  /* Divider line */
+  .divider {
+    width: 100%;
+    height: 1.5px;
+    background: #e1e1e1;
+    margin: 20px 0;
+  }
+  
+  /* Typography */
+  h4 {
+    font-weight: 700;
+    color: #1a1a1a;
+    margin-top: 22px;
+  }
+  
+  p,
+  li {
+    font-size: 16px;
+    color: #363636;
+    line-height: 1.7;
+  }
+  
+  .note-text {
+    color: #c62828;
+    font-weight: 600;
+  }
+  
+  /* Footer */
+  .footer-texts {
+    font-size: 15px;
+    text-align: center;
+    margin-top: 20px;
+    color: black;
+  }
+  
+  /* Links */
+  .link-style {
+    color: var(--color-primary);
+    text-decoration: none;
+    font-weight: 600;
+  }
+  
+  .link-style:hover {
+    text-decoration: underline;
+  }
+  

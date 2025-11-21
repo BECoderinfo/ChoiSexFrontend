@@ -4,6 +4,7 @@ import './Footer.css'
 import { FaBehance, FaFacebookF, FaLinkedinIn, FaSkype } from 'react-icons/fa'
 import { BsInstagram, BsTwitter } from 'react-icons/bs'
 import { IoMdMail } from 'react-icons/io'
+import { NavLink } from 'react-router-dom'
 
 function Footer() {
   return (
@@ -32,10 +33,11 @@ function Footer() {
           <Col xs={12} md={3} className="footer-col">
             <h6 className="footer-title">Policies</h6>
             <ul className="footer-list">
-              <li><a href="#">Return & Exchange</a></li>
-              <li><a href="#">Shipping & Customs</a></li>
-              <li><a href="#">Refund Policy</a></li>
-              <li><a href="#">Terms & Condition</a></li>
+              <li><NavLink to={'/terms-and-conditions'}>Terms & Conditions</NavLink></li>
+              <li><NavLink to={'/privacy-policy'}>Privacy Policy</NavLink></li>
+              <li><NavLink to={'/cancellation-and-refund'}>Cancellation & Refund Policy</NavLink></li>
+              <li><NavLink to={'/shipping-policy'}>Shipping Policy</NavLink></li>
+              <li><NavLink to={'/contact-us'}>Contact Us</NavLink></li>
             </ul>
           </Col>
           <Col xs={12} md={3} className="footer-col">
