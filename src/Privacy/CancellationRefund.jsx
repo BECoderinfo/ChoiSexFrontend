@@ -3,6 +3,7 @@ import { Container, Card } from "react-bootstrap";
 import { ShieldCheck } from "lucide-react";
 import { Helmet } from "react-helmet";
 import "./Policy.css";
+import { NavLink } from "react-router-dom";
 
 const CancellationRefund = () => {
   return (
@@ -11,7 +12,7 @@ const CancellationRefund = () => {
         <title>Cancellation & Refund Policy - Choisex</title>
         <meta
           name="description"
-          content="Choisex Cancellation & Refund Policy: Product returns accepted only for wrong or damaged deliveries. Hygiene-based restrictions apply."
+          content="Choisex Cancellation & Refund Policy: Refunds accepted only for wrong or damaged products. Request within 7 days. Processing within 5-7 working days."
         />
         <link rel="canonical" href="https://choisex.com/cancellation-and-refund" />
       </Helmet>
@@ -30,7 +31,7 @@ const CancellationRefund = () => {
 
               <div className="divider"></div>
 
-              <h4>Cancellation</h4>
+              <h4>Cancellation Requests</h4>
               <p>Orders cannot be cancelled once shipped.</p>
 
               <h4>Refund Eligibility</h4>
@@ -40,20 +41,30 @@ const CancellationRefund = () => {
               </ul>
 
               <p>
-                Returns only accepted if unused and sealed in original packaging
-                due to hygiene standards.
+                Refund requests must be raised within{" "}
+                <b>7 days</b> of product delivery.
               </p>
 
-              <p className="note-text">Shipping charges are non-refundable.</p>
+              <p>
+                Returns are accepted only if the item is unused and in its
+                original sealed packaging due to hygiene standards.
+              </p>
+
+              <h4>Refund Processing Time</h4>
+              <p>
+                Refund will be processed within{" "}
+                <b>5-7 working days</b> after approval.
+              </p>
+
+              <p className="note-text">
+                Shipping charges are non-refundable under all circumstances.
+              </p>
 
               <div className="divider"></div>
 
               <p className="footer-texts">
-                Contact our{" "}
-                <a href="/contact-us" className="link-style">
-                  support team
-                </a>{" "}
-                for refund help.
+                For refund assistance, please contact our{" "}
+                <NavLink to="/contact-us" className="link-style">support team</NavLink>.
               </p>
             </Card.Body>
           </Card>
