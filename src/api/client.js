@@ -1,5 +1,5 @@
-// const API_BASE_URL = "https://choisex.com/api";
-const API_BASE_URL="http://localhost:5000/api"
+const API_BASE_URL = "https://choisex.com/api";
+// const API_BASE_URL="http://localhost:5000/api"
 
 async function request(path, options = {}) {
   const { headers, ...rest } = options;
