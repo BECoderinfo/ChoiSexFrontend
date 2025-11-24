@@ -15,6 +15,13 @@ function Track() {
 
   const { orderId, cart, status, date, paymentMethod, address } = orderData;
 
+  const fixDate = (str) => {
+    const [datePart, timePart] = str.split(", ");
+    const [day, month, year] = datePart.split("/");
+    return new Date(`${year}-${month}-${day}T${timePart}`);
+  };
+  
+
   // ✅ Define tracking steps
   const steps = [
     { label: "Order confirmed", icon: <CheckCircle /> },
@@ -56,7 +63,7 @@ function Track() {
               <Col md={3} sm={6}>
                 <p className="small mb-1 text-muted">Estimated Delivery Time:</p>
                 <p className="fw-semibold">
-                  {new Date(date).toLocaleDateString()}
+                {fixDate(date).toLocaleDateString()}
                 </p>
               </Col>
               <Col md={3} sm={6}>

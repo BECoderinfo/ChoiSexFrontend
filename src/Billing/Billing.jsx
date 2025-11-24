@@ -73,7 +73,7 @@ function Billing() {
     localStorage.removeItem("cart");
   
     setTimeout(() => {
-      navigate("/cnforderotp");
+      navigate("/ordsummery");
     }, 1200);
   };
   
