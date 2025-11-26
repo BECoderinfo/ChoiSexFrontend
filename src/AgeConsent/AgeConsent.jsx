@@ -11,7 +11,7 @@ function AgeConsent({ onAccept }) {
   }, [])
 
   const handleAccept = () => {
-    localStorage.setItem('ageConsent', 'accepted')
+    sessionStorage.setItem('ageConsent', 'accepted')
     document.body.classList.remove('consent-modal-open')
     if (onAccept) {
       onAccept()

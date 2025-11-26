@@ -34,17 +34,17 @@ function App() {
   const [checkingConsent, setCheckingConsent] = useState(true)
 
   useEffect(() => {
-    // Check if consent has been given
-    const consent = localStorage.getItem('ageConsent')
-    if (consent === 'accepted') {
-      setConsentGiven(true)
+    const consent = sessionStorage.getItem("ageConsent");
+    if (consent === "accepted") {
+      setConsentGiven(true);
     }
-    setCheckingConsent(false)
-  }, [])
+    setCheckingConsent(false);
+  }, []);
 
   const handleConsentAccept = () => {
-    setConsentGiven(true)
-  }
+    sessionStorage.setItem("ageConsent", "accepted");
+    setConsentGiven(true);
+  };
 
   // Show loading state while checking consent
   if (checkingConsent) {
@@ -66,9 +66,9 @@ function App() {
                 <Route path="/category/:categoryId" element={<CategoryPage />} />
                 <Route path="/view-all" element={<ViewAllProducts />} />
                 <Route path="/delivery" element={<Delevery />} />
-                <Route path='/billing' element={<Billing />} />
-                <Route path='/ordsummery' element={<OrdSummery />} />
-                <Route path='/track/:orderId?' element={<Track />} />
+                <Route path='/billing/:orderId' element={<Billing />} />
+                <Route path='/ordsummery/:orderId' element={<OrdSummery />} />
+                <Route path='/track/:orderId' element={<Track />} />
                 <Route path='/orderHistory' element={<OrderHistory />} />
                 <Route path='/settings' element={<Setting />} />
                 <Route path='/changepassword' element={<Chengepassin />} />

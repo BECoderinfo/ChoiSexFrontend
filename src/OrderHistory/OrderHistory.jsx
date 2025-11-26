@@ -2,20 +2,60 @@ import React, { useEffect, useState } from "react";
 import { Container, Card, Row, Col, Button } from "react-bootstrap";
 import "./OrderHistory.css";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
+import * as orderAPI from "../api/order";
+import { useSnackbar } from "notistack";
+import { ShoppingCart } from "lucide-react";
 
 function OrderHistory() {
   const [orders, setOrders] = useState([]);
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+  const { isAuthenticated } = useAuth();
+  const { enqueueSnackbar } = useSnackbar();
 
   useEffect(() => {
-    const stored = JSON.parse(localStorage.getItem("orderHistory")) || [];
-    setOrders(stored.reverse()); // show latest first
-  }, []);
+    const loadOrders = async () => {
+      if (!isAuthenticated) {
+        setLoading(false);
+        return;
+      }
+      try {
+        setLoading(true);
+        const response = await orderAPI.getOrders();
+        if (response.success && response.data) {
+          setOrders(response.data);
+        }
+      } catch (error) {
+        enqueueSnackbar(error.message || "Failed to load orders", {
+          variant: "error",
+        });
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadOrders();
+  }, [isAuthenticated, enqueueSnackbar]);
 
   
 
-  if (orders.length === 0)
-    return <h5 className="text-center mt-5">No orders found!</h5>;
+  if (orders.length === 0) {
+    return (
+      <Container className="empty-cart-container text-center py-5">
+        <div className="empty-cart-box">
+          <ShoppingCart size={80} color="#a60063" className="mb-3" />
+          <h3 className="empty-cart-title">No Orders Found</h3>
+          <p className="empty-cart-text">
+          You haven’t made any purchases yet.
+          </p>
+          <Button className="continue-btn mt-3" onClick={() => navigate("/")}>
+            Continue Shopping
+          </Button>
+        </div>
+      </Container>
+    );
+  }
 
   return (
     <section className="order-history-section py-4">
@@ -54,10 +94,7 @@ function OrderHistory() {
                   <Button
                     className="track-btn"
                     size="sm"
-                    onClick={() => {
-                      localStorage.setItem("checkoutData", JSON.stringify(order));
-                      navigate("/track");
-                    }}
+                    onClick={() => navigate(`/track/${order.orderId}`)}
                   >
                     Track Order
                   </Button>

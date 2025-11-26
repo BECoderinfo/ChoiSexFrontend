@@ -108,15 +108,7 @@ const Header = () => {
                   >
                     Order History
                   </div>
-                  <div
-                    className="dropdown-item logout"
-                    onClick={() => {
-                      setOpen(false);
-                      navigate("/track");
-                    }}
-                  >
-                    Track Order
-                  </div>
+                
                   <div
                     className="dropdown-item logout"
                     onClick={() => {

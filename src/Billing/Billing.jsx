@@ -1,80 +1,113 @@
 import React, { useEffect, useState } from "react";
 import { Container, Row, Col, Card, Table, Form, Button } from "react-bootstrap";
 import "./Billing.css";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useSnackbar } from "notistack";
+import { useAuth } from "../context/AuthContext";
+import * as orderAPI from "../api/order";
 
 function Billing() {
   const [checkoutData, setCheckoutData] = useState(null);
   const [paymentMethod, setPaymentMethod] = useState("cod");
   const [deliveryNote, setDeliveryNote] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [initialLoading, setInitialLoading] = useState(true);
   const navigate = useNavigate();
+  const { orderId } = useParams();
   const { enqueueSnackbar } = useSnackbar();
+  const { isAuthenticated } = useAuth();
 
 
 
 
   useEffect(() => {
-    const data = JSON.parse(localStorage.getItem("checkoutData"));
-    setCheckoutData(data);
-  }, []);
+    const loadOrder = async () => {
+      if (!orderId) {
+        setInitialLoading(false);
+        return;
+      }
+      try {
+        setInitialLoading(true);
+        const response = await orderAPI.getOrder(orderId);
+        if (response.success) {
+          setCheckoutData(response.data);
+        }
+      } catch (error) {
+        enqueueSnackbar(error.message || "Failed to load order", {
+          variant: "error",
+        });
+      } finally {
+        setInitialLoading(false);
+      }
+    };
 
-  if (!checkoutData) return <h5 className="text-center mt-4">No checkout data found!</h5>;
+    if (!isAuthenticated) {
+      enqueueSnackbar("Please login to confirm order", { variant: "warning" });
+      navigate("/login");
+      return;
+    }
+
+    loadOrder();
+  }, [isAuthenticated, orderId, enqueueSnackbar, navigate]);
+
+  if (!orderId) {
+    return <h5 className="text-center mt-4">Order not specified!</h5>;
+  }
+
+  if (initialLoading) {
+    return <h5 className="text-center mt-4">Loading order...</h5>;
+  }
+
+  if (!checkoutData) {
+    return <h5 className="text-center mt-4">Order not found!</h5>;
+  }
 
   const { cart, address, totalAmount } = checkoutData;
 
-  const handleConfirm = () => {
+  const handleConfirm = async () => {
     if (!checkoutData) {
-      alert("No checkout data found!");
+      enqueueSnackbar("No checkout data found!", { variant: "error" });
       return;
     }
-  
-    // ✅ Create updated checkout data with payment method
-    const updatedCheckout = {
-      ...checkoutData,
-      paymentMethod: paymentMethod === "cod" ? "Cash on Delivery" : "Bank Transfer",
-      deliveryNote: deliveryNote,
-      status: "Confirmed",
-      confirmedAt: new Date().toISOString(),
-    };
-  
-    // ✅ Save updated data to localStorage (for current session)
-    localStorage.setItem("checkoutData", JSON.stringify(updatedCheckout));
-  
-    // ✅ Get existing order history
-    const existingOrders = JSON.parse(localStorage.getItem("orderHistory")) || [];
-  
-    // ✅ Find index of the existing order (by orderId)
-    const orderIndex = existingOrders.findIndex(
-      (order) => order.orderId === updatedCheckout.orderId
-    );
-  
-    if (orderIndex !== -1) {
-      // ✅ If found → update the existing order
-      existingOrders[orderIndex] = {
-        ...existingOrders[orderIndex],
-        ...updatedCheckout,
-      };
-    } else {
-      // ✅ If not found → add new (fallback)
-      existingOrders.push(updatedCheckout);
+
+    if (!isAuthenticated) {
+      enqueueSnackbar("Please login to confirm order", { variant: "warning" });
+      navigate("/login");
+      return;
     }
-  
-    // ✅ Save back to localStorage
-    localStorage.setItem("orderHistory", JSON.stringify(existingOrders));
-  
-    // ✅ Show confirmation alert
-    enqueueSnackbar(
-      `Order confirmed successfully via ${updatedCheckout.paymentMethod}!`,
-      { variant: "success" }
-    );
-  
-    // ✅ Optional: clear cart data if present
-    localStorage.removeItem("cart");
-  
-    setTimeout(() => {
-      navigate("/ordsummery");
-    }, 1200);
+
+    try {
+      setLoading(true);
+
+      // ✅ Update order status via API
+      const paymentMethodText = paymentMethod === "cod" ? "Cash on Delivery" : "Bank Transfer";
+      
+      const response = await orderAPI.updateOrderStatus(checkoutData.orderId, {
+        status: "Confirmed",
+        paymentMethod: paymentMethodText,
+        deliveryNote: deliveryNote,
+      });
+
+      if (response.success) {
+        setCheckoutData(response.data);
+
+        // ✅ Show confirmation alert
+        enqueueSnackbar(
+          `Order confirmed successfully via ${paymentMethodText}!`,
+          { variant: "success" }
+        );
+
+        setTimeout(() => {
+          navigate(`/ordsummery/${response.data.orderId}`);
+        }, 1200);
+      }
+    } catch (error) {
+      enqueueSnackbar(error.message || "Failed to confirm order", {
+        variant: "error",
+      });
+    } finally {
+      setLoading(false);
+    }
   };
   
 
@@ -202,8 +235,9 @@ function Billing() {
                   <Button
                     className="confirm-btn w-100 mt-3"
                     onClick={handleConfirm}
+                    disabled={loading}
                   >
-                    Confirm Order
+                    {loading ? "Confirming..." : "Confirm Order"}
                   </Button>
                 </Form>
               </Card.Body>

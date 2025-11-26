@@ -2,23 +2,87 @@ import React, { useEffect, useState } from "react";
 import { Container, Card, Row, Col } from "react-bootstrap";
 import { CheckCircle, UserCheck, Truck, Package } from "lucide-react";
 import "./Track.css";
+import { useParams } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
+import * as orderAPI from "../api/order";
+import { useSnackbar } from "notistack";
 
 function Track() {
   const [orderData, setOrderData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const { orderId } = useParams();
+  const { isAuthenticated } = useAuth();
+  const { enqueueSnackbar } = useSnackbar();
 
   useEffect(() => {
-    const stored = JSON.parse(localStorage.getItem("checkoutData"));
-    setOrderData(stored);
-  }, []);
+    const loadOrder = async () => {
+      if (!orderId) {
+        setLoading(false);
+        return;
+      }
+      try {
+        setLoading(true);
+        const response = await orderAPI.getOrder(orderId);
+        if (response.success) {
+          console.log(response.data);
+          
+          setOrderData(response.data);
+        }
+      } catch (error) {
+        enqueueSnackbar(error.message || "Failed to load order", {
+          variant: "error",
+        });
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (!isAuthenticated) {
+      setLoading(false);
+      return;
+    }
+
+    loadOrder();
+  }, [orderId, isAuthenticated, enqueueSnackbar]);
+
+  if (!orderId) {
+    return <h5 className="text-center mt-4">Order not specified!</h5>;
+  }
+
+  if (!isAuthenticated) {
+    return <h5 className="text-center mt-4">Please login to track orders.</h5>;
+  }
+
+  if (loading) {
+    return <h5 className="text-center mt-4">Loading order...</h5>;
+  }
 
   if (!orderData) return <h5 className="text-center mt-4">No order found!</h5>;
 
-  const { orderId, cart, status, date, paymentMethod, address } = orderData;
+  const { cart, status, date, paymentMethod, address } = orderData;
+
+  console.log(date);
+  
+  
 
   const fixDate = (str) => {
     const [datePart, timePart] = str.split(", ");
+  
     const [day, month, year] = datePart.split("/");
-    return new Date(`${year}-${month}-${day}T${timePart}`);
+    
+    let [time, modifier] = timePart.split(" ");
+    let [hours, minutes, seconds] = time.split(":");
+  
+    hours = parseInt(hours);
+    if (modifier.toLowerCase() === "pm" && hours < 12) {
+      hours += 12;
+    }
+    if (modifier.toLowerCase() === "am" && hours === 12) {
+      hours = 0;
+    }
+  
+    const formattedTime = `${hours.toString().padStart(2, "0")}:${minutes}:${seconds}`;
+    return new Date(`${year}-${month}-${day}T${formattedTime}`);
   };
   
 

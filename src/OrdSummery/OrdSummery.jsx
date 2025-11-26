@@ -1,21 +1,63 @@
 import React, { useEffect, useState } from "react";
 import { Container, Row, Col, Card, Button } from "react-bootstrap";
 import "./OrdSummery.css";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
+import * as orderAPI from "../api/order";
+import { useSnackbar } from "notistack";
 
 function OrdSummery() {
   const [checkoutData, setCheckoutData] = useState(null);
-  const Navigate = useNavigate();
+  const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
+  const { orderId } = useParams();
+  const { isAuthenticated } = useAuth();
+  const { enqueueSnackbar } = useSnackbar();
 
   useEffect(() => {
-    const data = JSON.parse(localStorage.getItem("checkoutData"));
-    setCheckoutData(data);
-  }, []);
+    const loadOrder = async () => {
+      if (!orderId) {
+        setLoading(false);
+        return;
+      }
+      try {
+        setLoading(true);
+        const response = await orderAPI.getOrder(orderId);
+        if (response.success) {
+          setCheckoutData(response.data);
+        }
+      } catch (error) {
+        enqueueSnackbar(error.message || "Failed to load order", {
+          variant: "error",
+        });
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (!isAuthenticated) {
+      enqueueSnackbar("Please login to see order summary", {
+        variant: "warning",
+      });
+      navigate("/login");
+      return;
+    }
+
+    loadOrder();
+  }, [orderId, isAuthenticated, enqueueSnackbar, navigate]);
+
+  if (!orderId) {
+    return <h5 className="text-center mt-5">Order not specified!</h5>;
+  }
+
+  if (loading) {
+    return <h5 className="text-center mt-5">Loading order...</h5>;
+  }
 
   if (!checkoutData)
     return <h5 className="text-center mt-5">No order data found!</h5>;
 
-  const { orderId, cart, address, totalAmount, date, paymentMethod } = checkoutData;
+  const {  cart, address, totalAmount, date, paymentMethod } = checkoutData;
 
   const subTotal = cart.reduce(
     (sum, item) => sum + Number(item.price) * Number(item.quantity),
@@ -54,7 +96,7 @@ function OrdSummery() {
                 </p>
               </div>
 
-              <Button className="track-btn" onClick={() => Navigate("/track")}>
+              <Button className="track-btn" onClick={() => navigate(`/track/${orderId}`)}>
                 Track Your Order
               </Button>
             </div>

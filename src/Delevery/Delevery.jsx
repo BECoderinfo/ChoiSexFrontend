@@ -1,15 +1,20 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Container, Row, Col, Card, Form, Button } from "react-bootstrap";
 import { useSnackbar } from "notistack";
 import { Edit, Trash } from "lucide-react";
 import "./Delevery.css";
 import { useCart } from "../CartContext"; // ✅ import to clear cart context if needed
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
+import * as addressAPI from "../api/address";
+import * as orderAPI from "../api/order";
+
 
 function Delevery() {
   const { enqueueSnackbar } = useSnackbar();
   const navigate = useNavigate();
-  const { clearCart } = useCart(); // ✅ clear cart from context also
+  const { clearCart, cart } = useCart(); // ✅ clear cart from context also
+  const { isAuthenticated } = useAuth();
 
   const [formData, setFormData] = useState({
     name: "",
@@ -22,20 +27,50 @@ function Delevery() {
     postal: "",
   });
 
-  const [savedAddresses, setSavedAddresses] = useState([]);
-  const [selectedAddress, setSelectedAddress] = useState(null);
+  const [addresses, setAddresses] = useState([]);
+  const [selectedAddressId, setSelectedAddressId] = useState(null);
+  const [editingAddressId, setEditingAddressId] = useState(null);
+  const [loadingAddresses, setLoadingAddresses] = useState(false);
   const [editIndex, setEditIndex] = useState(null);
 
+  const loadAddresses = useCallback(async () => {
+    try {
+      setLoadingAddresses(true);
+      const response = await addressAPI.getAddresses();
+      if (response.success) {
+        setAddresses(response.data || []);
+      }
+    } catch (error) {
+      enqueueSnackbar(error.message || "Failed to load addresses", {
+        variant: "error",
+      });
+    } finally {
+      setLoadingAddresses(false);
+    }
+  }, [enqueueSnackbar]);
+
   useEffect(() => {
-    const stored = JSON.parse(localStorage.getItem("addresses")) || [];
-    setSavedAddresses(stored);
-  }, []);
+    if (!isAuthenticated) {
+      enqueueSnackbar("Please login to manage delivery addresses", {
+        variant: "warning",
+      });
+      navigate("/login");
+      return;
+    }
+    loadAddresses();
+  }, [isAuthenticated, loadAddresses]);
+
+  useEffect(() => {
+    if (addresses.length > 0 && !selectedAddressId) {
+      setSelectedAddressId(addresses[0]._id);
+    }
+  }, [addresses, selectedAddressId]);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (
@@ -50,107 +85,113 @@ function Delevery() {
       return;
     }
 
-    let updatedAddresses;
-    if (editIndex !== null) {
-      updatedAddresses = [...savedAddresses];
-      updatedAddresses[editIndex] = formData;
-      enqueueSnackbar("Address updated successfully!", { variant: "success" });
-      setEditIndex(null);
-    } else {
-      updatedAddresses = [...savedAddresses, formData];
-      enqueueSnackbar("Address saved successfully!", { variant: "success" });
+    try {
+      if (editingAddressId) {
+        await addressAPI.updateAddress(editingAddressId, formData);
+        enqueueSnackbar("Address updated successfully!", { variant: "success" });
+      } else {
+        await addressAPI.createAddress(formData);
+        enqueueSnackbar("Address saved successfully!", { variant: "success" });
+      }
+      setEditingAddressId(null);
+      setFormData({
+        name: "",
+        mobile: "",
+        email: "",
+        address: "",
+        area: "",
+        city: "",
+        state: "",
+        postal: "",
+      });
+      await loadAddresses();
+    } catch (error) {
+      enqueueSnackbar(error.message || "Failed to save address", {
+        variant: "error",
+      });
     }
-
-    setSavedAddresses(updatedAddresses);
-    localStorage.setItem("addresses", JSON.stringify(updatedAddresses));
-    setFormData({
-      name: "",
-      mobile: "",
-      email: "",
-      address: "",
-      area: "",
-      city: "",
-      state: "",
-      postal: "",
-    });
   };
 
   const handleSelect = (address) => {
-    setSelectedAddress(address);
+    setSelectedAddressId(address._id);
     enqueueSnackbar(`Selected: ${address.name}, ${address.city}`, {
       variant: "info",
     });
   };
 
-  const handleDeliver = () => {
-    if (!selectedAddress) {
+  const handleDeliver = async () => {
+    if (!selectedAddressId) {
       enqueueSnackbar("Please select an address!", { variant: "warning" });
       return;
     }
 
-    // Get cart data from localStorage (stored earlier in Cart page)
-    const cartData = JSON.parse(localStorage.getItem("cart")) || [];
-
-    if (cartData.length === 0) {
-      enqueueSnackbar("No cart data found!", { variant: "error" });
+    if (!isAuthenticated) {
+      enqueueSnackbar("Please login to place an order", { variant: "warning" });
+      navigate("/login");
       return;
     }
 
-    // ✅ Create new order object
-    const newOrder = {
-      orderId: "ORD_" + Date.now(),
-      cart: cartData,
-      address: selectedAddress,
-      totalAmount: cartData.reduce(
-        (sum, item) => sum + item.price * item.quantity,
-        0
-      ),
-      date: new Date().toLocaleString(),
-    };
+    if (cart.length === 0) {
+      enqueueSnackbar("Your cart is empty!", { variant: "error" });
+      return;
+    }
 
-    // ✅ Retrieve previous orders (if any)
-    const existingOrders = JSON.parse(localStorage.getItem("orderHistory")) || [];
+    try {
+      // ✅ Create order via API
+      const response = await orderAPI.createOrder({
+        addressId: selectedAddressId,
+        paymentMethod: "Cash on Delivery", // Default, can be updated in billing
+        deliveryNote: "",
+      });
 
-    // ✅ Add this new order to the list
-    const updatedOrders = [...existingOrders, newOrder];
+      if (response.success) {
+        // ✅ Clear cart after placing the order
+        clearCart();
 
-    // ✅ Store updated order list
-    localStorage.setItem("orderHistory", JSON.stringify(updatedOrders));
+        enqueueSnackbar("Checkout ready — redirecting to payment...", {
+          variant: "success",
+        });
 
-    // ✅ Also store the current order as checkoutData for payment page
-    localStorage.setItem("checkoutData", JSON.stringify(newOrder));
-
-    // ✅ Clear cart after placing the order
-    localStorage.removeItem("cart");
-    clearCart();
-
-    enqueueSnackbar("Checkout ready — redirecting to payment...", {
-      variant: "success",
-    });
-
-    // ✅ Navigate to payment page
-    setTimeout(() => {
-      navigate("/billing");
-    }, 1200);
+        // ✅ Navigate to payment page
+        navigate(`/billing/${response.data.orderId}`);
+      }
+    } catch (error) {
+      enqueueSnackbar(error.message || "Failed to create order", {
+        variant: "error",
+      });
+    }
   };
 
 
-  const handleEdit = (index) => {
-    setFormData(savedAddresses[index]);
-    setEditIndex(index);
+  const handleEdit = (address) => {
+    setFormData({
+      name: address.name,
+      mobile: address.mobile,
+      email: address.email || "",
+      address: address.address,
+      area: address.area || "",
+      city: address.city,
+      state: address.state,
+      postal: address.postal,
+    });
+    setEditingAddressId(address._id);
     enqueueSnackbar("You can now edit the address.", { variant: "info" });
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  const handleDelete = (index) => {
+  const handleDelete = async (address) => {
     if (window.confirm("Are you sure you want to delete this address?")) {
-      const updated = savedAddresses.filter((_, i) => i !== index);
-      setSavedAddresses(updated);
-      localStorage.setItem("addresses", JSON.stringify(updated));
-      enqueueSnackbar("Address deleted successfully.", { variant: "error" });
-
-      if (selectedAddress === savedAddresses[index]) {
-        setSelectedAddress(null);
+      try {
+        await addressAPI.deleteAddress(address._id);
+        enqueueSnackbar("Address deleted successfully.", { variant: "info" });
+        if (selectedAddressId === address._id) {
+          setSelectedAddressId(null);
+        }
+        await loadAddresses();
+      } catch (error) {
+        enqueueSnackbar(error.message || "Failed to delete address", {
+          variant: "error",
+        });
       }
     }
   };
@@ -165,7 +206,7 @@ function Delevery() {
             <Card className="shadow-sm form-card">
               <div className="card-header-custom">
                 <h5 className="fw-semibold mb-0 ">
-                  {editIndex !== null ? "Edit Address" : "Add Address"}
+                  {editingAddressId ? "Edit Address" : "Add Address"}
                 </h5>
               </div>
 
@@ -299,13 +340,15 @@ function Delevery() {
               </div>
 
               <Card.Body className="p-4">
-                {savedAddresses.length === 0 ? (
+                {loadingAddresses ? (
+                  <p className="text-muted">Loading addresses...</p>
+                ) : addresses.length === 0 ? (
                   <p className="text-muted">No saved addresses yet.</p>
                 ) : (
-                  savedAddresses.map((addr, index) => (
+                  addresses.map((addr) => (
                     <div
-                      key={index}
-                      className={`address-option p-3 mb-3 rounded ${selectedAddress === addr ? "selected" : ""
+                      key={addr._id}
+                      className={`address-option p-3 mb-3 rounded ${selectedAddressId === addr._id ? "selected" : ""
                         }`}
                       style={{ cursor: "pointer" }}
                     >
@@ -325,7 +368,7 @@ function Delevery() {
                           variant="outline-primary"
                           size="sm"
                           className="icon-btn edit-btn"
-                          onClick={() => handleEdit(index)}
+                          onClick={() => handleEdit(addr)}
                         >
                           <Edit size={16} />
                         </Button>
@@ -334,7 +377,7 @@ function Delevery() {
                           variant="outline-danger"
                           size="sm"
                           className="icon-btn delete-btn"
-                          onClick={() => handleDelete(index)}
+                          onClick={() => handleDelete(addr)}
                         >
                           <Trash size={16} />
                         </Button>
