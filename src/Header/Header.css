@@ -187,6 +187,11 @@
   color: #333;
 }
 
+.mobile-drawer {
+  touch-action: none;
+}
+
+
 .user-dropdown-menu .dropdown-item:hover {
   background: #f3f3f3;
   border-radius: 10px;
