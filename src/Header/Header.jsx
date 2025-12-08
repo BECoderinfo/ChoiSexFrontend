@@ -180,19 +180,7 @@ const Header = () => {
   }, []);
 
 
-  // Disable body scroll on Drawer Open
-useEffect(() => {
-  if (showDrawer) {
-    document.body.style.overflow = "hidden";   // stop scrolling
-  } else {
-    document.body.style.overflow = "";         // reset scrolling
-  }
-
-  return () => {
-    document.body.style.overflow = "";         // cleanup on unmount
-  };
-}, [showDrawer]);
-
+  
 
   return (
     <>
