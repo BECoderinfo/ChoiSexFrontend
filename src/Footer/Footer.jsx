@@ -4,7 +4,7 @@ import './Footer.css'
 import { FaBehance, FaFacebookF, FaLinkedinIn, FaSkype } from 'react-icons/fa'
 import { BsInstagram, BsTwitter, BsWhatsapp } from 'react-icons/bs'
 import { IoMdMail } from 'react-icons/io'
-import { NavLink } from 'react-router-dom'
+import { Link, NavLink } from 'react-router-dom'
 
 function Footer() {
   return (
@@ -16,9 +16,9 @@ function Footer() {
             <ul className="footer-list">
               <li><a href="#">Sex Toy For Men</a></li>
               <li><a href="#">Sex Toy For Women</a></li>
-              <li><a href="#">BDSM Toys</a></li>
-              <li><a href="#">Anal Toys</a></li>
-              <li><a href="#">Track Order</a></li>
+              <li><a href="#">Sex Toy For Couple</a></li>
+              <li><a href="#">Lubricant</a></li>
+              <li><Link to="/orderHistory">Track Order</Link></li>
             </ul>
           </Col>
           <Col xs={12} md={3} className="footer-col">

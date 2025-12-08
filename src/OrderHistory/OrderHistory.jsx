@@ -6,10 +6,12 @@ import { useAuth } from "../context/AuthContext";
 import * as orderAPI from "../api/order";
 import { useSnackbar } from "notistack";
 import { ShoppingCart } from "lucide-react";
+import Loader, { useLoadingWithDelay } from "../Loader";
 
 function OrderHistory() {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
+  const showLoader = useLoadingWithDelay(loading, 1000);
   const navigate = useNavigate();
   const { isAuthenticated } = useAuth();
   const { enqueueSnackbar } = useSnackbar();
@@ -40,6 +42,14 @@ function OrderHistory() {
 
   
 
+  if (showLoader) {
+    return (
+      <Container className="text-center py-5">
+        <Loader fullScreen={true} size="large" />
+      </Container>
+    );
+  }
+
   if (orders.length === 0) {
     return (
       <Container className="empty-cart-container text-center py-5">
@@ -60,7 +70,7 @@ function OrderHistory() {
   return (
     <section className="order-history-section py-4">
       <Container>
-        <h4 className="mb-4 fw-semibold">Order History</h4>
+        <h5 className="section-title">Order History</h5>
 
         {orders.map((order, index) => (
           <Card key={index} className="shadow-sm mb-4 order-card">

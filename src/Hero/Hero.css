@@ -1,76 +1,71 @@
 .hero-img {
-    background-size: cover;
-    background-repeat: no-repeat;
-    width: 100%;
-    height: 100%;
-    position: relative;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-  
+  background-size: cover;
+  background-repeat: no-repeat;
+  width: 100%;
+  height: 100%;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 60px 10px;    /* just internal padding, NO image height change */
+}
 
-  
-  /* ✅ Content centered */
+/* Content */
+.hero-content {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  color: #fff;
+  width: 100%;
+  max-width: 900px;
+  padding: 40px 15px;
+}
+
+/* Title */
+.hero-title {
+  font-size: clamp(22px, 4vw, 50px);   /* Responsive */
+  font-weight: 700;
+  color: #fff;
+  line-height: 1.3;
+  margin-bottom: 12px;
+}
+
+/* Subtitle */
+.hero-subtitle {
+  font-size: clamp(14px, 2.5vw, 24px); /* Responsive */
+  font-weight: 300;
+  color: #fff;
+  margin-bottom: 20px;
+}
+
+.hero-subtitle .highlight {
+  color: #e01e63;
+  font-weight: 300;
+}
+
+/* Button */
+.hero-btn {
+  background-color: var(--color-primary) !important;
+  border: none !important;
+  color: #fff !important;
+  font-weight: 500;
+  padding: 8px 30px !important;
+  border-radius: 6px !important;
+  font-size: clamp(12px, 1.5vw, 16px); /* responsive text */
+  transition: background-color 0.3s ease;
+}
+
+.hero-btn:hover {
+  background-color: var(--color-primary-dark) !important;
+}
+
+/* Small Phones */
+@media (max-width: 480px) {
+  .hero-img {
+    padding: 40px 8px; /* only inner spacing, not image height */
+  }
+
   .hero-content {
-    position: relative;
-    z-index: 2;
-    text-align: center;
-    color: #fff;
-    padding: 60px 20px;
+    padding: 30px 8px;
   }
-  
-  /* Title */
-  .hero-title {
-    font-size: 50px;
-    font-weight: 700;
-    color: #fff;
-    line-height: 1.3;
-    margin-bottom: 12px;
-  }
-  
-  /* Subtitle */
-  .hero-subtitle {
-    font-size: 24px;
-    font-weight: 300;
-    color: #fff;
-    margin-bottom: 20px;
-  }
-  
-  .hero-subtitle .highlight {
-    color: #e01e63; /* magenta highlight */
-    font-weight: 300;
-  }
-  
-  /* Button */
-  .hero-btn {
-    background-color: var(--color-primary) !important;
-    border: none !important;
-    color: #fff !important;
-    font-weight: 500;
-    padding: 6px 30px !important;
-    border-radius: 6px !important;
-    font-size: 14px;
-    transition: background-color 0.3s ease;
-  }
-  
-  .hero-btn:hover {
-    background-color: var(--color-primary-dark) !important;
-  }
-  
-  /* Responsive */
-  @media (max-width: 768px) {
-    .hero-title {
-      font-size: 22px;
-    }
-  
-    .hero-subtitle {
-      font-size: 16px;
-    }
-  
-    .hero-btn {
-      font-size: 13px;
-      padding: 6px 18px !important;
-    }
-  }
-  
+}

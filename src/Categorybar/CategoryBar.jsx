@@ -1,41 +1,22 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { Container, Nav } from "react-bootstrap";
 import { NavLink } from "react-router-dom";
+import Loader from "../Loader";
 import "./CategoryBar.css";
-import { getCategories } from "../api/category";
 
-const CategoryBar = () => {
-  const [categories, setCategories] = useState([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        setLoading(true);
-        const response = await getCategories();
-        setCategories(response?.data || []);
-      } catch (error) {
-        console.error("Error fetching categories:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchCategories();
-  }, []);
-
+const CategoryBar = ({ className = "", onCategoryClick, categories = [], loading }) => {
   if (loading) {
     return (
       <div className="category-bar">
         <Container fluid>
-          <div className="text-center p-3">Loading categories...</div>
+          <Loader size="small" />
         </Container>
       </div>
     );
   }
 
   return (
-    <div className="category-bar">
+    <div className={`category-bar ${className}`}>
       <Container fluid>
         <Nav className="category-nav">
           {categories.map((category) => (
@@ -43,10 +24,9 @@ const CategoryBar = () => {
               <NavLink
                 to={`/category/${category._id}`}
                 className={({ isActive }) =>
-                  isActive
-                    ? "category-link active"
-                    : "category-link"
+                  isActive ? "category-link active" : "category-link"
                 }
+                onClick={() => typeof onCategoryClick === "function" && onCategoryClick()}
               >
                 {category.name}
               </NavLink>

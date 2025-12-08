@@ -45,7 +45,12 @@ function Login() {
       <Container className="login-container">
         {/* Logo */}
         <div className="logo-container mb-3">
-          <img src={logo} alt="CHOISEX" className="logo" />
+          <img 
+            src={logo} 
+            alt="CHOISEX" 
+            className="logo" 
+            loading="lazy"
+          />
         </div>
 
         {/* Title */}
@@ -62,6 +67,9 @@ function Login() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
+                disabled={loading}
+                autoComplete="email"
+                aria-label="Email address"
               />
             </Form.Group>
 
@@ -74,20 +82,23 @@ function Login() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
+                  disabled={loading}
+                  autoComplete="current-password"
+                  aria-label="Password"
                 />
-                {showPassword ? (
-                  <Eye
-                    className="eye-icon"
-                    size={18}
-                    onClick={() => setShowPassword(false)}
-                  />
-                ) : (
-                  <EyeOff
-                    className="eye-icon"
-                    size={18}
-                    onClick={() => setShowPassword(true)}
-                  />
-                )}
+                <button
+                  type="button"
+                  className="eye-icon"
+                  onClick={() => setShowPassword(!showPassword)}
+                  aria-label={showPassword ? "Hide password" : "Show password"}
+                  disabled={loading}
+                >
+                  {showPassword ? (
+                    <EyeOff size={18} />
+                  ) : (
+                    <Eye size={18} />
+                  )}
+                </button>
               </div>
             </Form.Group>
 
@@ -101,13 +112,14 @@ function Login() {
               type="submit"
               className="login-btn w-100"
               disabled={loading}
+              aria-label="Log in"
             >
               {loading ? "Logging in..." : "Log in"}
             </Button>
 
             <div className="text-center mt-3">
               <p className="signup-text">
-                Don't have an Account ?{" "}
+                Don't have an Account?{" "}
                 <NavLink to={'/register'} className="create-link">
                   Register
                 </NavLink>

@@ -1,22 +1,12 @@
 import React from "react";
 import { Container, Card } from "react-bootstrap";
 import { ShieldCheck } from "lucide-react";
-import { Helmet } from "react-helmet";
 import "./Policy.css";
 import { NavLink } from "react-router-dom";
 
 const CancellationRefund = () => {
   return (
     <>
-      <Helmet>
-        <title>Cancellation & Refund Policy - Choisex</title>
-        <meta
-          name="description"
-          content="Choisex Cancellation & Refund Policy: Refunds accepted only for wrong or damaged products. Request within 7 days. Processing within 5-7 working days."
-        />
-        <link rel="canonical" href="https://choisex.com/cancellation-and-refund" />
-      </Helmet>
-
       <div className="policy-background">
         <Container className="policy-wrapper">
           <Card className="policy-card elegant-shadow">

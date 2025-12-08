@@ -14,6 +14,7 @@ import OTP from './OTP/OTP'
 import SetPassWord from './SetPassWord/SetPassWord'
 import ViewAllProducts from './Viewall/ViewAllProducts'
 import CategoryPage from './Category/CategoryPage'
+import SubcategoryPage from './Category/SubcategoryPage'
 import Delevery from './Delevery/Delevery'
 import Billing from './Billing/Billing'
 import OrdSummery from './OrdSummery/OrdSummery'
@@ -64,6 +65,7 @@ function App() {
                 <Route path='/cart' element={<Cart />} />
                 <Route path="/product/:id" element={<ProductDetail />} />
                 <Route path="/category/:categoryId" element={<CategoryPage />} />
+                <Route path="/subcategory/:subcategoryId" element={<SubcategoryPage />} />
                 <Route path="/view-all" element={<ViewAllProducts />} />
                 <Route path="/delivery" element={<Delevery />} />
                 <Route path='/billing/:orderId' element={<Billing />} />

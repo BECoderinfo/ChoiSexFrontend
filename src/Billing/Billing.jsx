@@ -5,6 +5,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useSnackbar } from "notistack";
 import { useAuth } from "../context/AuthContext";
 import * as orderAPI from "../api/order";
+import Loader, { useLoadingWithDelay } from "../Loader";
 
 function Billing() {
   const [checkoutData, setCheckoutData] = useState(null);
@@ -12,6 +13,7 @@ function Billing() {
   const [deliveryNote, setDeliveryNote] = useState("");
   const [loading, setLoading] = useState(false);
   const [initialLoading, setInitialLoading] = useState(true);
+  const showLoader = useLoadingWithDelay(initialLoading, 1000);
   const navigate = useNavigate();
   const { orderId } = useParams();
   const { enqueueSnackbar } = useSnackbar();
@@ -54,8 +56,8 @@ function Billing() {
     return <h5 className="text-center mt-4">Order not specified!</h5>;
   }
 
-  if (initialLoading) {
-    return <h5 className="text-center mt-4">Loading order...</h5>;
+  if (showLoader) {
+    return <Loader fullScreen={true} size="large" />;
   }
 
   if (!checkoutData) {

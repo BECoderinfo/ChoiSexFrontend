@@ -1,0 +1,134 @@
+/* Loader Container */
+.loader-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  width: 100%;
+}
+
+.loader-fullscreen {
+  min-height: 50vh;
+  padding: 4rem 2rem;
+}
+
+/* Loader Spinner */
+.loader-spinner {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Spinner Sizes */
+.loader-small {
+  width: 32px;
+  height: 32px;
+}
+
+.loader-medium {
+  width: 48px;
+  height: 48px;
+}
+
+.loader-large {
+  width: 64px;
+  height: 64px;
+}
+
+/* Loader Rings */
+.loader-ring {
+  position: absolute;
+  border: 3px solid transparent;
+  border-top-color: var(--color-primary);
+  border-radius: 50%;
+  animation: loader-spin 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+}
+
+.loader-spinner .loader-ring:nth-child(1) {
+  width: 100%;
+  height: 100%;
+  border-width: 3px;
+  animation-delay: -0.45s;
+  opacity: 0.8;
+}
+
+.loader-spinner .loader-ring:nth-child(2) {
+  width: 75%;
+  height: 75%;
+  border-width: 2.5px;
+  animation-delay: -0.3s;
+  opacity: 0.6;
+  top: 12.5%;
+  left: 12.5%;
+}
+
+.loader-spinner .loader-ring:nth-child(3) {
+  width: 50%;
+  height: 50%;
+  border-width: 2px;
+  animation-delay: -0.15s;
+  opacity: 0.4;
+  top: 25%;
+  left: 25%;
+}
+
+/* Animation */
+@keyframes loader-spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* Loader Message */
+.loader-message {
+  margin-top: 1rem;
+  color: var(--color-primary);
+  font-size: 0.95rem;
+  font-weight: 500;
+  text-align: center;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .loader-small {
+    width: 28px;
+    height: 28px;
+  }
+
+  .loader-medium {
+    width: 40px;
+    height: 40px;
+  }
+
+  .loader-large {
+    width: 56px;
+    height: 56px;
+  }
+
+  .loader-fullscreen {
+    min-height: 40vh;
+    padding: 3rem 1.5rem;
+  }
+
+  .loader-message {
+    font-size: 0.875rem;
+    margin-top: 0.75rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .loader-container {
+    padding: 1.5rem;
+  }
+
+  .loader-fullscreen {
+    min-height: 35vh;
+    padding: 2rem 1rem;
+  }
+}
+

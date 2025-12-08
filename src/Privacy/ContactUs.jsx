@@ -35,6 +35,7 @@ const ContactUs = () => {
                 target="_blank"
                 rel="noopener noreferrer"
                 className="link-style"
+                aria-label="Visit Choisex website (opens in new tab)"
               >
                 https://choisex.com
               </a>
@@ -43,7 +44,6 @@ const ContactUs = () => {
             <h4>Working Hours</h4>
             <p>Monday – Saturday | 10:00 AM to 7:00 PM</p>
 
-            
             <div className="divider"></div>
 
             <p className="footer-texts">

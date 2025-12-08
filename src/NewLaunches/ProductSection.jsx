@@ -49,7 +49,7 @@ function ProductSection({ title, products, viewall, all }) {
             };
 
             return (
-              <Col key={item.id} xs={12} sm={6} md={3} className="mb-4">
+              <Col key={item.id} xs={12} sm={6} md={4} lg={3} className="mb-4">
                 <Card
                   className="launch-card"
                   onClick={() => navigate(`/product/${item.id}`)}

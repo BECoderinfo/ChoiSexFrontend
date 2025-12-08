@@ -8,6 +8,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import * as addressAPI from "../api/address";
 import * as orderAPI from "../api/order";
+import Loader from "../Loader";
 
 
 function Delevery() {
@@ -341,7 +342,7 @@ function Delevery() {
 
               <Card.Body className="p-4">
                 {loadingAddresses ? (
-                  <p className="text-muted">Loading addresses...</p>
+                  <Loader size="small" />
                 ) : addresses.length === 0 ? (
                   <p className="text-muted">No saved addresses yet.</p>
                 ) : (

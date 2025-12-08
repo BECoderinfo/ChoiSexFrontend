@@ -6,6 +6,7 @@ import star from "../assets/star.png";
 import ProductSection from "../NewLaunches/ProductSection";
 import { useCart } from "../CartContext";
 import { getProduct, getProducts } from "../api/product";
+import Loader, { useLoadingWithDelay } from "../Loader";
 
 function ProductDetail() {
   const { id } = useParams();
@@ -14,6 +15,7 @@ function ProductDetail() {
   const [product, setProduct] = useState(null);
   const [relatedProducts, setRelatedProducts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const showLoader = useLoadingWithDelay(loading, 1000);
 
   const [mainImage, setMainImage] = useState("");
   const [quantity, setQuantity] = useState(1);
@@ -59,8 +61,8 @@ function ProductDetail() {
     }
   }, [cart, product]);
 
-  if (loading) {
-    return <div className="text-center p-5">Loading product...</div>;
+  if (showLoader) {
+    return <Loader fullScreen={true} size="large" />;
   }
 
   if (!product) {
@@ -88,7 +90,7 @@ function ProductDetail() {
                 <img src={mainImage} alt={product.name} />
               </div>
               <div className="image-thumbnails">
-                {product.images?.map((img, i) => (
+                {product.images?.slice(0, 4).map((img, i) => (
                   <img
                     key={i}
                     src={img}

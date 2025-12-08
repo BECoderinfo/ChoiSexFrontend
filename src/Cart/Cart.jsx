@@ -1,26 +1,34 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Container, Row, Col, Card, Button, Form } from "react-bootstrap";
 import { Trash2, Plus, Minus, ShoppingCart } from "lucide-react";
 import "./Cart.css";
 import { useCart } from "../CartContext";
 import ProductSection from "../NewLaunches/ProductSection";
 import { useNavigate } from "react-router-dom";
-import { TbPlayerTrackNextFilled, TbPlayerTrackPrevFilled } from "react-icons/tb";
+import {
+  TbPlayerTrackNextFilled,
+  TbPlayerTrackPrevFilled,
+} from "react-icons/tb";
 import { useAuth } from "../context/AuthContext";
 import { useSnackbar } from "notistack";
+import { getProducts } from "../api/product";
 
 function Cart() {
-  const { cart, removeFromCart, clearCart, increaseQuantity, decreaseQuantity } =
-    useCart();
+  const {
+    cart,
+    removeFromCart,
+    clearCart,
+    increaseQuantity,
+    decreaseQuantity,
+  } = useCart();
   const navigate = useNavigate();
   const { isAuthenticated } = useAuth();
   const { enqueueSnackbar } = useSnackbar();
 
-  console.log(cart);
-  
-
   // ✅ Pagination State
   const [currentPage, setCurrentPage] = useState(1);
+  const [relatedProducts, setRelatedProducts] = useState([]);
+
   const itemsPerPage = 5;
   const totalPages = Math.ceil(cart.length / itemsPerPage);
 
@@ -31,8 +39,33 @@ function Cart() {
 
   const handlePageChange = (pageNumber) => {
     setCurrentPage(pageNumber);
-    window.scrollTo({ top: 0, behavior: "smooth" }); // smooth scroll to top
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
+
+  useEffect(() => {
+    const fetchRelated = async () => {
+      if (cart.length === 0) return;
+
+      try {
+        const firstItem = cart[0];
+        const categoryId = firstItem.category?._id || firstItem.category;
+
+        if (categoryId) {
+          const { data } = await getProducts(categoryId);
+
+          // Filter out items already in cart
+          const filtered = data
+            .filter((p) => !cart.some((c) => c.id === p.id))
+            .slice(0, 4);
+          setRelatedProducts(filtered);
+        }
+      } catch (error) {
+        console.log("Error fetching related:", error);
+      }
+    };
+
+    fetchRelated();
+  }, [cart]);
 
   if (cart.length === 0) {
     return (
@@ -41,7 +74,7 @@ function Cart() {
           <ShoppingCart size={80} color="#a60063" className="mb-3" />
           <h3 className="empty-cart-title">Your Cart is Empty</h3>
           <p className="empty-cart-text">
-            Looks like you haven’t added anything to your cart yet.
+            Looks like you haven't added anything to your cart yet.
           </p>
           <Button className="continue-btn mt-3" onClick={() => navigate("/")}>
             Continue Shopping
@@ -57,158 +90,186 @@ function Cart() {
     <Container className="cart-container my-4">
       <Row>
         {/* LEFT SIDE - CART ITEMS */}
-        <Col md={8}>
+        <Col xs={12} lg={8}>
           <h5 className="section-title">Cart</h5>
 
           {currentItems.map((item) => (
             <Card className="cart-item mb-3" key={item.id}>
-              <Row className="align-items-center g-2">
-                <Col md={2} xs={3}>
+              <Row className="align-items-center">
+                {/* Product Image */}
+                <Col xs={12} sm={3} md={2} className="text-center text-sm-start mb-3 mb-sm-0 d-flex">
                   <img
                     src={item.image}
                     alt={item.name}
-                    className="cart-item-image"
+                    className="cart-item-image img-fluid"
                   />
                 </Col>
-                <Col md={7} xs={9}>
+
+                {/* Product Details */}
+                <Col xs={12} sm={5} md={7} className="mb-3 mb-sm-0">
                   <h6 className="cart-item-name">{item.name}</h6>
-                  <p className="cart-item-model">Model: {item.SKU}</p>
-                  <h4 className="prices">
-                    Rs.{item.price}{" "}
-                    <span className="mark-prices">Rs.{item.markprice}</span>
-                  </h4>
+                  <p className="cart-item-model mb-2">Model: {item.SKU}</p>
+                  <div className="d-flex flex-wrap align-items-center gap-2">
+                    <h4 className="prices mb-0">
+                      Rs.{item.price}
+                    </h4>
+                    {item.markprice && (
+                      <span className="mark-prices">
+                        Rs.{item.markprice}
+                      </span>
+                    )}
+                  </div>
+                  <div className="mt-2">
+                    <small className="text-muted">
+                      Availability: {item.Availability || 10} items
+                    </small>
+                  </div>
                 </Col>
-                <Col md={3} xs={12} className="text-end mt-md-0 mt-2">
+
+                {/* Actions */}
+                <Col xs={12} sm={4} md={3}>
                   <div className="cart-item-actions">
-                    <Button
-                      variant="light"
-                      size="sm"
-                      className="qty-btn"
-                      onClick={() => decreaseQuantity(item.id)}
-                      disabled={item.quantity <= 1}
-                    >
-                      <Minus size={16} color="white" />
-                    </Button>
+                    <div className="d-flex align-items-center justify-content-center justify-content-sm-end mb-2 mb-sm-0">
+                      <Button
+                        variant="light"
+                        size="sm"
+                        className="qty-btn"
+                        onClick={() => decreaseQuantity(item.id)}
+                        disabled={item.quantity <= 1}
+                        aria-label="Decrease quantity"
+                      >
+                        <Minus size={16} color="white" />
+                      </Button>
 
-                    <span className="qty-number">{item.quantity}</span>
+                      <span className="qty-number mx-3">{item.quantity}</span>
 
-                    <Button
-                      variant="light"
-                      size="sm"
-                      className="qty-btn"
-                      onClick={() => increaseQuantity(item.id)}
-                      disabled={item.quantity >= item.Availability}
-                    >
-                      <Plus size={16} color="white" />
-                    </Button>
+                      <Button
+                        variant="light"
+                        size="sm"
+                        className="qty-btn"
+                        onClick={() => increaseQuantity(item.id)}
+                        disabled={item.quantity >= (item.Availability || 10)}
+                        aria-label="Increase quantity"
+                      >
+                        <Plus size={16} color="white" />
+                      </Button>
 
-                    <Button
-                      variant="danger"
-                      size="sm"
-                      className="delete-btn"
-                      onClick={() => removeFromCart(item.id)}
-                    >
-                      <Trash2 size={16} />
-                    </Button>
+                      <Button
+                        variant="danger"
+                        size="sm"
+                        className="delete-btn ms-3"
+                        onClick={() => removeFromCart(item.id)}
+                        aria-label="Remove item"
+                      >
+                        <Trash2 size={16} />
+                      </Button>
+                    </div>
                   </div>
                 </Col>
               </Row>
             </Card>
           ))}
 
-
           {/* ✅ Pagination UI */}
-          <div className="pagination-wrapper mt-4 mb-4">
-            <div className="pagination-container">
-              <Button
-                variant="outline-secondary"
-                size="sm"
-                className="nav-btn"
-                disabled={currentPage === 1}
-                onClick={() => handlePageChange(currentPage - 1)}
-              >
-                <TbPlayerTrackPrevFilled /> Previous
-              </Button>
+          {cart.length > itemsPerPage && (
+            <div className="pagination-wrapper">
+              <div className="pagination-container">
+                <Button
+                  variant="outline-secondary"
+                  size="sm"
+                  className="nav-btn"
+                  disabled={currentPage === 1}
+                  onClick={() => handlePageChange(currentPage - 1)}
+                >
+                  <TbPlayerTrackPrevFilled className="me-1" /> Previous
+                </Button>
 
-              <div className="page-btn-all">
-                {[...Array(totalPages)].map((_, index) => (
-                  <Button
-                    key={index + 1}
-                    size="sm"
-                    className={`page-btn ${currentPage === index + 1 ? "active" : ""
+                <div className="page-btn-all">
+                  {[...Array(totalPages)].map((_, index) => (
+                    <Button
+                      key={index + 1}
+                      size="sm"
+                      className={`page-btn ${
+                        currentPage === index + 1 ? "active" : ""
                       }`}
-                    onClick={() => handlePageChange(index + 1)}
-                  >
-                    {index + 1}
-                  </Button>
-                ))}
+                      onClick={() => handlePageChange(index + 1)}
+                    >
+                      {index + 1}
+                    </Button>
+                  ))}
+                </div>
+
+                <Button
+                  variant="outline-secondary"
+                  size="sm"
+                  className="nav-btn"
+                  disabled={currentPage === totalPages}
+                  onClick={() => handlePageChange(currentPage + 1)}
+                >
+                  Next <TbPlayerTrackNextFilled className="ms-1" />
+                </Button>
               </div>
 
-              <Button
-                variant="outline-secondary"
-                size="sm"
-                className="nav-btn"
-                disabled={currentPage === totalPages}
-                onClick={() => handlePageChange(currentPage + 1)}
-              >
-                Next <TbPlayerTrackNextFilled />
-              </Button>
+              <p className="pagination-info mt-2">
+                Showing <b>{(currentPage - 1) * itemsPerPage + 1}</b>–
+                <b>{Math.min(currentPage * itemsPerPage, cart.length)}</b> of{" "}
+                <b>{cart.length}</b> items
+              </p>
             </div>
+          )}
 
-            {/* Optional text showing page info */}
-            <p className="pagination-info mt-2">
-              Showing <b>{(currentPage - 1) * itemsPerPage + 1}</b>–
-              <b>{Math.min(currentPage * itemsPerPage, cart.length)}</b> of{" "}
-              <b>{cart.length}</b> items
-            </p>
-          </div>
-
-
-          <div className="text-end mb-5 mt-4">
-            <Button variant="outline-secondary" onClick={clearCart}>
-              Clear Cart
+          <div className="text-center text-md-end mb-4 mt-4">
+            <Button
+              variant="outline-secondary"
+              onClick={clearCart}
+              className="clear-cart-btn"
+            >
+              Clear All Items
             </Button>
           </div>
         </Col>
 
-        {/* ✅ FIXED CHECKOUT SUMMARY */}
-        <Col md={4}>
+        {/* ✅ CHECKOUT SUMMARY */}
+        <Col xs={12} lg={4}>
           <div className="checkout-summary-wrapper">
             <Card className="checkout-summary">
               <Card.Body>
-                <h5 className="checkout-title mb-3">Checkout Summary</h5>
+                <h5 className="checkout-title mb-4">Checkout Summary</h5>
 
                 <div className="summary-item">
-                  <span>Product</span>
-                  <span>{cart.length}x</span>
+                  <span>Items ({cart.length})</span>
+                  <span className="fw-semibold">{cart.length}x</span>
                 </div>
 
                 <div className="summary-item">
-                  <span>Sub-Total</span>
-                  <span>₹{total}</span>
+                  <span>Subtotal</span>
+                  <span className="fw-semibold">₹{total}</span>
                 </div>
 
                 <div className="summary-item">
-                  <span className="coupon-discount">Coupon Discount</span>
-                  <Form.Control
-                    type="text"
-                    placeholder="Apply Coupon"
-                    className="coupon-input"
-                  />
+                  <div className="d-flex align-items-center justify-content-between w-100">
+                    <span className="coupon-discount">Coupon Discount</span>
+                    <Form.Control
+                      type="text"
+                      placeholder="Enter coupon code"
+                      className="coupon-input"
+                      size="sm"
+                    />
+                  </div>
                 </div>
 
                 <div className="summary-item">
                   <span>Shipping</span>
-                  <span>Free</span>
+                  <span className="text-success fw-semibold">FREE</span>
                 </div>
 
                 <div className="summary-item total">
                   <span>Total Amount</span>
-                  <span>₹{total}</span>
+                  <span className="fw-bold fs-5">₹{total}</span>
                 </div>
 
                 <Button
-                  className="checkout-btn w-100 mt-3"
+                  className="checkout-btn w-100 mt-4"
                   onClick={() => {
                     if (!isAuthenticated) {
                       enqueueSnackbar("Please login to proceed to checkout", {
@@ -220,20 +281,34 @@ function Cart() {
                     navigate("/delivery");
                   }}
                 >
-                  Checkout
+                  Proceed to Checkout
                 </Button>
 
+                <div className="text-center mt-3">
+                  <Button
+                    variant="link"
+                    className="text-decoration-none text-muted"
+                    onClick={() => navigate("/")}
+                  >
+                    ← Continue Shopping
+                  </Button>
+                </div>
               </Card.Body>
             </Card>
           </div>
         </Col>
       </Row>
 
-      {/* <ProductSection
-        title="Related products"
-        products={cart}
-        viewall="hide"
-      /> */}
+      {/* RELATED PRODUCTS */}
+      {relatedProducts.length > 0 && (
+        <div className="mt-5 pt-4">
+          <ProductSection
+            title="Related Products"
+            products={relatedProducts}
+            viewall="hide"
+          />
+        </div>
+      )}
     </Container>
   );
 }

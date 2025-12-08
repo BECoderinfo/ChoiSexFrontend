@@ -5,6 +5,7 @@ import { getProductsByCategoryQuery } from "../api/product";
 import { getCategories } from "../api/category";
 import { Container } from "react-bootstrap";
 import ProductSection from "../NewLaunches/ProductSection";
+import Loader, { useLoadingWithDelay } from "../Loader";
 
 
 function CategoryPage() {
@@ -12,6 +13,7 @@ function CategoryPage() {
   const [products, setProducts] = useState([]);
   const [categoryName, setCategoryName] = useState("");
   const [loading, setLoading] = useState(true);
+  const showLoader = useLoadingWithDelay(loading, 1000);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -48,8 +50,8 @@ function CategoryPage() {
   }, [categoryId]);
   
 
-  if (loading) {
-    return <div className="text-center p-5">Loading products...</div>;
+  if (showLoader) {
+    return <Loader fullScreen={true} size="large" />;
   }
 
   // 👉 If no products → show Coming Soon

@@ -5,11 +5,13 @@ import ProductSection from '../NewLaunches/ProductSection'
 import Features from '../Features/Features'
 import { getProducts } from '../api/product'
 import { getCategories } from '../api/category'
+import Loader, { useLoadingWithDelay } from '../Loader'
 
 function Home() {
   const [allProducts, setAllProducts] = useState([])
   const [categories, setCategories] = useState([])
   const [loading, setLoading] = useState(true)
+  const showLoader = useLoadingWithDelay(loading, 1000)
 
   useEffect(() => {
     const fetchData = async () => {
@@ -40,8 +42,8 @@ function Home() {
     )
   }
 
-  if (loading) {
-    return <div className="text-center p-5">Loading products...</div>
+  if (showLoader) {
+    return <Loader fullScreen={true} size="large" />
   }
 
  

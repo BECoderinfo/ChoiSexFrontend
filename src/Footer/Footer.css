@@ -75,7 +75,7 @@
 }
 
 @media (max-width: 768px) {
-  .footer-container { padding: 24px 16px; }
+  .footer-container { padding: 34px 26px !important; }
 }
 
 
