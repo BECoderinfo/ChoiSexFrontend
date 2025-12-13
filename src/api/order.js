@@ -30,3 +30,28 @@ export function updateOrderStatus(orderId, statusData) {
   });
 }
 
+// Create Razorpay order for an existing order
+export function createRazorpayOrder(orderId) {
+  return request(`/orders/${orderId}/razorpay/create`, {
+    method: "POST",
+  });
+}
+
+// Verify Razorpay payment
+export function verifyRazorpayPayment(orderId, payload) {
+  return request(`/orders/${orderId}/razorpay/verify`, {
+    method: "POST",
+    body: JSON.stringify(payload),
+  });
+}
+
+export function getTracking(orderId) {
+  return request(`/order/get-tracking/${orderId}`);
+}
+
+export function cancelOrder(orderId) {
+  return request(`/orders/${orderId}/cancel`, {
+    method: "POST",
+  });
+}
+

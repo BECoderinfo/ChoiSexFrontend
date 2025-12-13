@@ -101,13 +101,17 @@ function OrdSummery() {
 
   const { cart, address, totalAmount, date, paymentMethod } = checkoutData;
 
-  const subTotal = cart.reduce(
+  // Total is already GST-inclusive
+  const totalInclusive = cart.reduce(
     (sum, item) => sum + Number(item.price) * Number(item.quantity),
     0
   );
-
-  const tax = (subTotal * 3) / 100;
-  const grandTotal = subTotal + tax;
+  
+  // Calculate base price: Total / 1.18
+  const basePrice = Number((totalInclusive / 1.18).toFixed(2));
+  
+  // Calculate GST: Total - Base Price
+  const gst = Number((totalInclusive - basePrice).toFixed(2));
 
   return (
     <section className="order-success-section py-5">
@@ -220,23 +224,23 @@ function OrdSummery() {
                   <hr className="my-3" />
 
                   <div className="d-flex justify-content-between small mb-2">
-                    <span>Sub Total</span>
-                    <span>₹{subTotal.toFixed(2)}</span>
+                    <span>Sub Total (Base Price)</span>
+                    <span>₹{basePrice.toFixed(2)}</span>
                   </div>
                   <div className="d-flex justify-content-between small mb-2">
                     <span>Shipping</span>
                     <span className="text-success">Free</span>
                   </div>
                   <div className="d-flex justify-content-between small mb-2">
-                    <span>Tax (3%)</span>
-                    <span>₹{tax.toFixed(2)}</span>
+                    <span>GST (18%)</span>
+                    <span>₹{gst.toFixed(2)}</span>
                   </div>
 
                   <hr className="my-3" />
 
                   <div className="d-flex justify-content-between fw-bold pt-2">
-                    <span>Total Amount</span>
-                    <span className="text-success">₹{grandTotal.toFixed(2)}</span>
+                    <span>Total Amount (Inclusive of GST)</span>
+                    <span className="text-success">₹{totalInclusive.toFixed(2)}</span>
                   </div>
                 </Card.Body>
               </Card>

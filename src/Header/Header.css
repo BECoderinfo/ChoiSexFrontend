@@ -570,8 +570,9 @@
   top: calc(100% + 8px);
   left: 0;
   right: 0;
-  max-height: 400px;
+  max-height: 60vh;
   margin: 0 -12px;
+  overflow-y: auto;
 }
 
 /* Mobile Responsive */

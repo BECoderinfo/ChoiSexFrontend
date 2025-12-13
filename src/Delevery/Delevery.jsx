@@ -15,7 +15,7 @@ function Delevery() {
   const { enqueueSnackbar } = useSnackbar();
   const navigate = useNavigate();
   const { clearCart, cart } = useCart(); // ✅ clear cart from context also
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, user } = useAuth();
 
   const [formData, setFormData] = useState({
     name: "",
@@ -67,6 +67,18 @@ function Delevery() {
     }
   }, [addresses, selectedAddressId]);
 
+  // Prefill locked fields from logged-in user and keep them immutable
+  useEffect(() => {
+    if (user) {
+      setFormData((prev) => ({
+        ...prev,
+        name: user.name || "",
+        email: user.email || "",
+        mobile: user.phone || user.mobile || "",
+      }));
+    }
+  }, [user]);
+
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
@@ -75,14 +87,17 @@ function Delevery() {
     e.preventDefault();
 
     if (
-      !formData.name ||
-      !formData.email ||
-      !formData.mobile ||
       !formData.address ||
       !formData.city ||
       !formData.postal
     ) {
       enqueueSnackbar("Please fill all required fields.", { variant: "warning" });
+      return;
+    }
+
+    // Prevent adding more than 3 addresses (UI guard; backend enforces too)
+    if (!editingAddressId && addresses.length >= 3) {
+      enqueueSnackbar("You can save up to 3 delivery addresses only.", { variant: "error" });
       return;
     }
 
@@ -95,16 +110,14 @@ function Delevery() {
         enqueueSnackbar("Address saved successfully!", { variant: "success" });
       }
       setEditingAddressId(null);
-      setFormData({
-        name: "",
-        mobile: "",
-        email: "",
+      setFormData((prev) => ({
+        ...prev,
         address: "",
         area: "",
         city: "",
         state: "",
         postal: "",
-      });
+      }));
       await loadAddresses();
     } catch (error) {
       enqueueSnackbar(error.message || "Failed to save address", {
@@ -165,16 +178,15 @@ function Delevery() {
 
 
   const handleEdit = (address) => {
-    setFormData({
-      name: address.name,
-      mobile: address.mobile,
-      email: address.email || "",
+    // Keep identity fields locked to user; only update location fields
+    setFormData((prev) => ({
+      ...prev,
       address: address.address,
       area: address.area || "",
       city: address.city,
       state: address.state,
       postal: address.postal,
-    });
+    }));
     setEditingAddressId(address._id);
     enqueueSnackbar("You can now edit the address.", { variant: "info" });
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -221,7 +233,8 @@ function Delevery() {
                           type="text"
                           name="name"
                           value={formData.name}
-                          onChange={handleChange}
+                          readOnly
+                          disabled
                           placeholder="Enter your name"
                         />
                       </Form.Group>
@@ -233,7 +246,8 @@ function Delevery() {
                           type="text"
                           name="mobile"
                           value={formData.mobile}
-                          onChange={handleChange}
+                          readOnly
+                          disabled
                           placeholder="Enter mobile number"
                         />
                       </Form.Group>
@@ -261,7 +275,8 @@ function Delevery() {
                           type="email"
                           name="email"
                           value={formData.email || ""}
-                          onChange={handleChange}
+                          readOnly
+                          disabled
                           placeholder="Enter your email address"
                         />
                       </Form.Group>

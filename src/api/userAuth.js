@@ -70,4 +70,12 @@ export function resetPassword(token, password) {
   });
 }
 
+// Refresh access token
+export function refreshAccessToken(refreshToken) {
+  return request("/user/auth/refresh-token", {
+    method: "POST",
+    body: JSON.stringify({ refreshToken }),
+  });
+}
+
 

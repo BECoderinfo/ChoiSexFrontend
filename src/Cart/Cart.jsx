@@ -84,7 +84,17 @@ function Cart() {
     );
   }
 
-  const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  // Calculate totals from GST-inclusive prices
+  const totalInclusive = cart.reduce(
+    (sum, item) => sum + Number(item.price) * Number(item.quantity),
+    0
+  );
+  
+  // Calculate base price: Total / 1.18
+  const basePrice = Number((totalInclusive / 1.18).toFixed(2));
+  
+  // Calculate GST: Total - Base Price
+  const gst = Number((totalInclusive - basePrice).toFixed(2));
 
   return (
     <Container className="cart-container my-4">
@@ -242,11 +252,16 @@ function Cart() {
                 </div>
 
                 <div className="summary-item">
-                  <span>Subtotal</span>
-                  <span className="fw-semibold">₹{total}</span>
+                  <span>Subtotal (Base Price)</span>
+                  <span className="fw-semibold">₹{basePrice.toFixed(2)}</span>
                 </div>
 
                 <div className="summary-item">
+                  <span>GST (18%)</span>
+                  <span className="fw-semibold">₹{gst.toFixed(2)}</span>
+                </div>
+
+                {/* <div className="summary-item">
                   <div className="d-flex align-items-center justify-content-between w-100">
                     <span className="coupon-discount">Coupon Discount</span>
                     <Form.Control
@@ -256,7 +271,7 @@ function Cart() {
                       size="sm"
                     />
                   </div>
-                </div>
+                </div> */}
 
                 <div className="summary-item">
                   <span>Shipping</span>
@@ -264,8 +279,8 @@ function Cart() {
                 </div>
 
                 <div className="summary-item total">
-                  <span>Total Amount</span>
-                  <span className="fw-bold fs-5">₹{total}</span>
+                  <span>Total Amount (Inclusive of GST)</span>
+                  <span className="fw-bold fs-5">₹{totalInclusive.toFixed(2)}</span>
                 </div>
 
                 <Button

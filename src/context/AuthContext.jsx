@@ -24,8 +24,16 @@ export function AuthProvider({ children }) {
       const response = await getCurrentUser();
       if (response.success) {
         setUser(response.data);
+      } else {
+        // Clear tokens if auth check fails
+        localStorage.removeItem("accessToken");
+        localStorage.removeItem("refreshToken");
+        setUser(null);
       }
     } catch (error) {
+      // Clear tokens on error
+      localStorage.removeItem("accessToken");
+      localStorage.removeItem("refreshToken");
       setUser(null);
     } finally {
       setLoading(false);
@@ -36,6 +44,13 @@ export function AuthProvider({ children }) {
     try {
       const response = await signupAPI(userData);
       if (response.success) {
+        // Store tokens if provided
+        if (response.accessToken) {
+          localStorage.setItem("accessToken", response.accessToken);
+        }
+        if (response.refreshToken) {
+          localStorage.setItem("refreshToken", response.refreshToken);
+        }
         setUser(response.data);
         return { success: true, data: response.data };
       }
@@ -48,6 +63,13 @@ export function AuthProvider({ children }) {
     try {
       const response = await loginAPI(email, password);
       if (response.success) {
+        // Store tokens if provided
+        if (response.accessToken) {
+          localStorage.setItem("accessToken", response.accessToken);
+        }
+        if (response.refreshToken) {
+          localStorage.setItem("refreshToken", response.refreshToken);
+        }
         setUser(response.data);
         return { success: true, data: response.data };
       }
@@ -59,10 +81,18 @@ export function AuthProvider({ children }) {
   const logout = async () => {
     try {
       await logoutAPI();
+      // Clear tokens from localStorage
+      localStorage.removeItem("accessToken");
+      localStorage.removeItem("refreshToken");
       setUser(null);
       navigate("/login");
       return { success: true };
     } catch (error) {
+      // Clear tokens even if API call fails
+      localStorage.removeItem("accessToken");
+      localStorage.removeItem("refreshToken");
+      setUser(null);
+      navigate("/login");
       return { success: false, message: error.message };
     }
   };

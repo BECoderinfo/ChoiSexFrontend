@@ -28,6 +28,7 @@ import CancellationRefund from './Privacy/CancellationRefund.jsx'
 import ShippingPolicy from './Privacy/ShippingPolicy.jsx'
 import ContactUs from './Privacy/ContactUs.jsx'
 import AgeConsent from './AgeConsent/AgeConsent'
+import AboutUs from './Privacy/Aboutus.jsx'
 
 
 function App() {
@@ -79,6 +80,7 @@ function App() {
                 <Route path="/cancellation-and-refund" element={<CancellationRefund />} />
                 <Route path="/shipping-policy" element={<ShippingPolicy />} />
                 <Route path="/contact-us" element={<ContactUs />} />
+                <Route path="/about-us" element={<AboutUs />} />
               </Route>
 
 

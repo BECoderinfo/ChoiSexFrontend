@@ -18,6 +18,7 @@ function Billing() {
   const { orderId } = useParams();
   const { enqueueSnackbar } = useSnackbar();
   const { isAuthenticated } = useAuth();
+  const [razorpayReady, setRazorpayReady] = useState(false);
 
 
 
@@ -52,6 +53,21 @@ function Billing() {
     loadOrder();
   }, [isAuthenticated, orderId, enqueueSnackbar, navigate]);
 
+  // Load Razorpay script
+  useEffect(() => {
+    const existing = document.getElementById("razorpay-sdk");
+    if (existing) {
+      setRazorpayReady(true);
+      return;
+    }
+    const script = document.createElement("script");
+    script.id = "razorpay-sdk";
+    script.src = "https://checkout.razorpay.com/v1/checkout.js";
+    script.onload = () => setRazorpayReady(true);
+    script.onerror = () => setRazorpayReady(false);
+    document.body.appendChild(script);
+  }, []);
+
   if (!orderId) {
     return <h5 className="text-center mt-4">Order not specified!</h5>;
   }
@@ -66,6 +82,18 @@ function Billing() {
 
   const { cart, address, totalAmount } = checkoutData;
 
+  // Calculate totals from GST-inclusive prices
+  const totalInclusive = cart.reduce(
+    (sum, item) => sum + Number(item.price) * Number(item.quantity),
+    0
+  );
+  
+  // Calculate base price: Total / 1.18
+  const basePrice = Number((totalInclusive / 1.18).toFixed(2));
+  
+  // Calculate GST: Total - Base Price
+  const gst = Number((totalInclusive - basePrice).toFixed(2));
+
   const handleConfirm = async () => {
     if (!checkoutData) {
       enqueueSnackbar("No checkout data found!", { variant: "error" });
@@ -78,12 +106,79 @@ function Billing() {
       return;
     }
 
+    if (paymentMethod === "razorpay") {
+      if (!razorpayReady) {
+        enqueueSnackbar("Payment gateway not ready. Please try again.", { variant: "error" });
+        return;
+      }
+
+      try {
+        setLoading(true);
+        // Create Razorpay order on backend
+        const rpRes = await orderAPI.createRazorpayOrder(checkoutData.orderId);
+        const rpData = rpRes?.data;
+
+        if (!rpRes.success || !rpData?.razorpayOrderId) {
+          throw new Error(rpRes?.message || "Failed to create payment order");
+        }
+
+        const options = {
+          key: rpData.key,
+          amount: rpData.amount,
+          currency: rpData.currency || "INR",
+          name: "Choisex",
+          description: `Order ${checkoutData.orderId}`,
+          order_id: rpData.razorpayOrderId,
+          prefill: {
+            name: checkoutData.address?.name || "",
+            email: checkoutData.address?.email || "",
+            contact: checkoutData.address?.mobile || "",
+          },
+          notes: { orderId: checkoutData.orderId },
+          handler: async function (response) {
+            try {
+              const verifyRes = await orderAPI.verifyRazorpayPayment(checkoutData.orderId, {
+                razorpay_payment_id: response.razorpay_payment_id,
+                razorpay_order_id: response.razorpay_order_id,
+                razorpay_signature: response.razorpay_signature,
+              });
+
+              if (verifyRes.success) {
+                enqueueSnackbar("Payment successful!", { variant: "success" });
+                navigate(`/ordsummery/${checkoutData.orderId}`);
+              } else {
+                enqueueSnackbar(verifyRes.message || "Payment verification failed", {
+                  variant: "error",
+                });
+              }
+            } catch (err) {
+              enqueueSnackbar(err.message || "Payment verification failed", {
+                variant: "error",
+              });
+            }
+          },
+          modal: {
+            ondismiss: () => {
+              enqueueSnackbar("Payment cancelled", { variant: "info" });
+            },
+          },
+        };
+
+        const razorpay = new window.Razorpay(options);
+        razorpay.open();
+      } catch (error) {
+        enqueueSnackbar(error.message || "Failed to start payment", { variant: "error" });
+      } finally {
+        setLoading(false);
+      }
+      return;
+    }
+
+    // Cash / other methods: confirm immediately
     try {
       setLoading(true);
+      const paymentMethodText = paymentMethod === "cod" ? "Cash on Delivery" : "";
 
-      // ✅ Update order status via API
-      const paymentMethodText = paymentMethod === "cod" ? "Cash on Delivery" : "Bank Transfer";
-      
       const response = await orderAPI.updateOrderStatus(checkoutData.orderId, {
         status: "Confirmed",
         paymentMethod: paymentMethodText,
@@ -92,12 +187,9 @@ function Billing() {
 
       if (response.success) {
         setCheckoutData(response.data);
-
-        // ✅ Show confirmation alert
-        enqueueSnackbar(
-          `Order confirmed successfully via ${paymentMethodText}!`,
-          { variant: "success" }
-        );
+        enqueueSnackbar(`Order confirmed successfully via ${paymentMethodText}!`, {
+          variant: "success",
+        });
 
         setTimeout(() => {
           navigate(`/ordsummery/${response.data.orderId}`);
@@ -160,9 +252,15 @@ function Billing() {
                       ))}
                       <tr>
                         <td colSpan="4" className="text-end fw-semibold">
-                          Sub Total
+                          Sub Total (Base Price)
                         </td>
-                        <td>₹{totalAmount}</td>
+                        <td>₹{basePrice.toFixed(2)}</td>
+                      </tr>
+                      <tr>
+                        <td colSpan="4" className="text-end fw-semibold">
+                          GST (18%)
+                        </td>
+                        <td>₹{gst.toFixed(2)}</td>
                       </tr>
                       <tr>
                         <td colSpan="4" className="text-end fw-semibold">
@@ -172,9 +270,9 @@ function Billing() {
                       </tr>
                       <tr>
                         <td colSpan="4" className="text-end fw-semibold">
-                          Total Amount
+                          Total Amount (Inclusive of GST)
                         </td>
-                        <td>₹{totalAmount}</td>
+                        <td>₹{totalInclusive.toFixed(2)}</td>
                       </tr>
                     </tbody>
                   </Table>
@@ -216,13 +314,14 @@ function Billing() {
                   />
                   <Form.Check
                     type="radio"
-                    label="Bank Transfer"
+                    label="Razorpay (UPI / Card / Netbanking)"
                     name="payment"
-                    value="bank"
-                    checked={paymentMethod === "bank"}
+                    value="razorpay"
+                    checked={paymentMethod === "razorpay"}
                     onChange={(e) => setPaymentMethod(e.target.value)}
+                    className="mb-2"
                   />
-
+                  
                   <Form.Group className="mt-3">
                     <Form.Label>Delivery instruction</Form.Label>
                     <Form.Control

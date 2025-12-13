@@ -136,7 +136,6 @@ export function CartProvider({ children }) {
       const response = await cartAPI.clearCart();
       if (response.success) {
         setCart([]);
-        enqueueSnackbar("Cart cleared successfully", { variant: "info" });
       }
     } catch (error) {
       enqueueSnackbar(error.message || "Failed to clear cart", {

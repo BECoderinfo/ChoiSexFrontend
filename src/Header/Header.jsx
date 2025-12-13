@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useCallback } from "react";
 import { Container, Form, Button, Offcanvas, Nav } from "react-bootstrap";
 import { ShoppingCart, Search, Menu, X, Home, Settings, LogOut, Package } from "lucide-react";
 import "./Header.css";
@@ -10,6 +10,7 @@ import { useSnackbar } from "notistack";
 import CategoryBar from "../Categorybar/CategoryBar";
 import { getProducts } from "../api/product";
 import { getCategories } from "../api/category";
+import { getSubcategories } from "../api/subcategory";
 
 const Header = () => {
   const navigate = useNavigate();
@@ -23,6 +24,7 @@ const Header = () => {
   const [showSearchDropdown, setShowSearchDropdown] = useState(false);
   const [allProducts, setAllProducts] = useState([]);
   const [allCategories, setAllCategories] = useState([]);
+  const [allSubcategories, setAllSubcategories] = useState([]);
   const [mobileSearchQuery, setMobileSearchQuery] = useState("");
   const [mobileSearchResults, setMobileSearchResults] = useState({ categories: [], products: [] });
   const [showMobileSearchDropdown, setShowMobileSearchDropdown] = useState(false);
@@ -44,26 +46,38 @@ const Header = () => {
     }
   };
 
-  // Fetch products & categories only once
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const [productsRes, categoriesRes] = await Promise.all([getProducts(), getCategories()]);
-        setAllProducts(productsRes?.data || []);
-        setAllCategories(categoriesRes?.data || []);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      } finally {
-        setLoadingCategories(false); // Loader hide after first fetch
-      }
-    };
-    fetchData();
+  const fetchAllData = useCallback(async () => {
+    try {
+      const [productsRes, categoriesRes, subcategoriesRes] = await Promise.all([
+        getProducts(),
+        getCategories(),
+        getSubcategories(),
+      ]);
+      setAllProducts(productsRes?.data || []);
+      setAllCategories(categoriesRes?.data || []);
+      setAllSubcategories(subcategoriesRes?.data || []);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    } finally {
+      setLoadingCategories(false); // Loader hide after first fetch
+    }
   }, []);
+
+  // Initial fetch
+  useEffect(() => {
+    fetchAllData();
+  }, [fetchAllData]);
+
+  // Refresh search datasets whenever user types (ensures newest products appear without page reload)
+  useEffect(() => {
+    if (!searchQuery.trim() && !mobileSearchQuery.trim()) return;
+    fetchAllData();
+  }, [searchQuery, mobileSearchQuery, fetchAllData]);
 
   // Debounce Web Search
   useEffect(() => {
     if (!searchQuery.trim()) {
-      setSearchResults({ categories: [], products: [], primaryCategory: null });
+      setSearchResults({ categories: [], subcategories: [], products: [], primaryCategory: null });
       setShowSearchDropdown(false);
       return;
     }
@@ -80,9 +94,20 @@ const Header = () => {
         .filter((item) => item.priority > 0)
         .sort((a, b) => b.priority - a.priority);
 
+      const subcategoryMatches = allSubcategories
+        .map((subcategory) => {
+          const subName = subcategory.name.toLowerCase();
+          let priority = subName === query ? 3 : subName.startsWith(query) ? 2 : subName.includes(query) ? 1 : 0;
+          return { subcategory, priority };
+        })
+        .filter((item) => item.priority > 0)
+        .sort((a, b) => b.priority - a.priority);
+
       const matchedCategories = categoryMatches.map((item) => item.category).slice(0, 5);
+      const matchedSubcategories = subcategoryMatches.map((item) => item.subcategory).slice(0, 5);
       const primaryCategory = categoryMatches.length > 0 ? categoryMatches[0].category : null;
       const primaryCategoryId = primaryCategory?._id;
+      const primarySubcategoryId = matchedSubcategories.length > 0 ? matchedSubcategories[0]._id : null;
 
       let matchedProducts = [];
       if (primaryCategoryId) {
@@ -90,12 +115,20 @@ const Header = () => {
           const productCategoryId = product.category?._id || product.category;
           return productCategoryId === primaryCategoryId;
         });
+      } else if (primarySubcategoryId) {
+        matchedProducts = allProducts.filter((product) => {
+          const productSubcategoryId = product.subcategory?._id || product.subcategory;
+          return productSubcategoryId === primarySubcategoryId;
+        });
       } else {
-        matchedProducts = allProducts.filter((product) => product.name.toLowerCase().includes(query));
+        matchedProducts = allProducts.filter((product) =>
+          product.name.toLowerCase().includes(query)
+        );
       }
 
       setSearchResults({
         categories: matchedCategories,
+        subcategories: matchedSubcategories,
         products: matchedProducts.slice(0, 10),
         primaryCategory: primaryCategory,
       });
@@ -109,7 +142,7 @@ const Header = () => {
   // Debounce Mobile Search
   useEffect(() => {
     if (!mobileSearchQuery.trim()) {
-      setMobileSearchResults({ categories: [], products: [], primaryCategory: null });
+      setMobileSearchResults({ categories: [], subcategories: [], products: [], primaryCategory: null });
       setShowMobileSearchDropdown(false);
       return;
     }
@@ -126,9 +159,20 @@ const Header = () => {
         .filter((item) => item.priority > 0)
         .sort((a, b) => b.priority - a.priority);
 
+      const subcategoryMatches = allSubcategories
+        .map((subcategory) => {
+          const subName = subcategory.name.toLowerCase();
+          let priority = subName === query ? 3 : subName.startsWith(query) ? 2 : subName.includes(query) ? 1 : 0;
+          return { subcategory, priority };
+        })
+        .filter((item) => item.priority > 0)
+        .sort((a, b) => b.priority - a.priority);
+
       const matchedCategories = categoryMatches.map((item) => item.category).slice(0, 5);
+      const matchedSubcategories = subcategoryMatches.map((item) => item.subcategory).slice(0, 5);
       const primaryCategory = categoryMatches.length > 0 ? categoryMatches[0].category : null;
       const primaryCategoryId = primaryCategory?._id;
+      const primarySubcategoryId = matchedSubcategories.length > 0 ? matchedSubcategories[0]._id : null;
 
       let matchedProducts = [];
       if (primaryCategoryId) {
@@ -136,12 +180,18 @@ const Header = () => {
           const productCategoryId = product.category?._id || product.category;
           return productCategoryId === primaryCategoryId;
         });
+      } else if (primarySubcategoryId) {
+        matchedProducts = allProducts.filter((product) => {
+          const productSubcategoryId = product.subcategory?._id || product.subcategory;
+          return productSubcategoryId === primarySubcategoryId;
+        });
       } else {
         matchedProducts = allProducts.filter((product) => product.name.toLowerCase().includes(query));
       }
 
       setMobileSearchResults({
         categories: matchedCategories,
+        subcategories: matchedSubcategories,
         products: matchedProducts.slice(0, 10),
         primaryCategory: primaryCategory,
       });
@@ -226,6 +276,24 @@ const Header = () => {
                           }}
                         >
                           {category.name.toUpperCase()}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  {searchResults.subcategories?.length > 0 && (
+                    <div className="search-dropdown-section">
+                      {searchResults.subcategories.map((subcategory) => (
+                        <div
+                          key={subcategory._id}
+                          className="search-category-item"
+                          onClick={() => {
+                            navigate(`/subcategory/${subcategory._id}`);
+                            setSearchQuery("");
+                            setShowSearchDropdown(false);
+                          }}
+                        >
+                          {subcategory.name}
                         </div>
                       ))}
                     </div>
@@ -370,6 +438,25 @@ const Header = () => {
                           }}
                         >
                           {category.name.toUpperCase()}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  {mobileSearchResults.subcategories?.length > 0 && (
+                    <div className="search-dropdown-section">
+                      {mobileSearchResults.subcategories.map((subcategory) => (
+                        <div
+                          key={subcategory._id}
+                          className="search-category-item"
+                          onClick={() => {
+                            navigate(`/subcategory/${subcategory._id}`);
+                            setMobileSearchQuery("");
+                            setShowMobileSearchDropdown(false);
+                            handleDrawerClose();
+                          }}
+                        >
+                          {subcategory.name}
                         </div>
                       ))}
                     </div>

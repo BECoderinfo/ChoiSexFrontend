@@ -57,21 +57,50 @@
 }
 
 .status-badge {
-    padding: 2px 8px;
-    border-radius: 20px;
-    font-size: 12px;
+    padding: 2px 5px;
+    border-radius: 10px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: capitalize;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
 }
 
+.status-badge svg {
+    vertical-align: middle;
+    margin-bottom: 2px;
+}
+
+.status-badge.status-delivered {
+    background: rgba(76, 209, 55, 0.1);
+    color: #4cd137;
+    border: 1px solid rgba(76, 209, 55, 0.2);
+}
+
+.status-badge.status-pending {
+    background: rgba(251, 197, 49, 0.1);
+    color: #fbc531;
+    border: 1px solid rgba(251, 197, 49, 0.2);
+}
+
+.status-badge.status-shipped {
+    background: rgba(0, 168, 255, 0.1);
+    color: #00a8ff;
+    border: 1px solid rgba(0, 168, 255, 0.2);
+}
+
+.status-badge.status-cancelled {
+    background: rgba(232, 65, 24, 0.1);
+    color: #e84118;
+    border: 1px solid rgba(232, 65, 24, 0.2);
+}
+
+/* Remove old status badge styles */
 .status-badge.confirmed {
-    background-color: #d1f3da;
-    color: #1a7b31;
-    font-weight: 600;
-}
-
-.status-badge.pending {
-    background-color: #fff3cd;
-    color: #856404;
-    font-weight: 600;
+    background: rgba(76, 209, 55, 0.1);
+    color: #4cd137;
+    border: 1px solid rgba(76, 209, 55, 0.2);
 }
 
 /* ✅ Responsive */
