@@ -70,6 +70,11 @@ function OrderHistory() {
         icon: <XCircle size={14} />, 
         label: "Cancelled" 
       },
+      "Payment Failed": { 
+        class: "status-cancelled", 
+        icon: <XCircle size={14} />, 
+        label: "Payment Failed" 
+      },
       Confirmed: { 
         class: "status-pending", 
         icon: <Clock size={14} />, 
@@ -135,10 +140,10 @@ function OrderHistory() {
                       <strong>Date:</strong> {order.date}
                     </p>
                     <p className="small text-muted mb-0">
-                      <strong>Status:</strong>{" "}
-                      <span className={`status-badge ${statusInfo.class}`}>
-                        {statusInfo.icon}
-                        {statusInfo.label}
+                      <strong>Shipping Status:</strong>{" "}
+                      <span className={`status-badge ${getStatusBadge(order.status).class}`}>
+                        {getStatusBadge(order.status).icon}
+                        {getStatusBadge(order.status).label}
                       </span>
                     </p>
                   </Col>

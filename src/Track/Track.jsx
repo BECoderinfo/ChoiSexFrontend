@@ -35,6 +35,7 @@ function Track() {
     { label: "Picked by Courier", icon: <UserCheck size={20} /> },
     { label: "On the Way", icon: <Truck size={20} /> },
     { label: "Ready for Pickup", icon: <Package size={20} /> },
+    { label: "Delivered", icon: <CheckCircle size={20} /> },
   ];
 
   const status = tracking?.status || "Order Confirmed";
@@ -43,7 +44,7 @@ function Track() {
     const idx = steps.findIndex((s) => s.label === status);
     return idx === -1 ? 0 : idx;
   }, [status]);
-  
+
 
   /** --------------------------
    * FETCH ORDER + TRACKING DATA
@@ -166,16 +167,19 @@ function Track() {
     (sum, item) => sum + Number(item.price) * Number(item.quantity),
     0
   );
-  
+
   // Calculate base price: Total / 1.18
   const basePrice = Number((totalInclusive / 1.18).toFixed(2));
-  
+
   // Calculate GST: Total - Base Price
   const gst = Number((totalInclusive - basePrice).toFixed(2));
 
   /** --------------------------
    * MAIN UI START
    * -------------------------- */
+
+  const isPaymentFailed = orderData?.paymentStatus === "Failed";
+  const displayStatus = isPaymentFailed ? "Cancelled" : orderData?.status;
 
   return (
     <section className="track-section py-4">
@@ -190,7 +194,18 @@ function Track() {
             </p>
 
             {/* TRACKING INFO OR REFUND MESSAGE */}
-            {orderData?.status === "Cancelled" ? (
+            {isPaymentFailed ? (
+              <div className="p-3 bg-light rounded mb-3 d-flex flex-column justify-content-center">
+                <p className="mb-2 fw-semibold text-danger">Order Cancelled</p>
+                <p className="mb-1">
+                  Your payment was cancelled or failed, therefore your order has been cancelled.
+                  If any amount was deducted, it will be refunded as per policy.
+                </p>
+                <p className="mb-0 text-muted" style={{ fontSize: "0.9rem" }}>
+                  Payment Status: Failed
+                </p>
+              </div>
+            ) : orderData?.status === "Cancelled" ? (
               <div className="p-3 bg-light rounded mb-3 d-flex flex-column justify-content-center">
                 <p className="mb-2 fw-semibold text-danger">Order Cancelled</p>
                 <p className="mb-1">
@@ -214,13 +229,13 @@ function Track() {
                   <p className="fw-semibold">
                     {tracking?.estimateDate
                       ? new Date(tracking.estimateDate).toLocaleDateString(
-                          "en-IN",
-                          {
-                            day: "numeric",
-                            month: "short",
-                            year: "numeric",
-                          }
-                        )
+                        "en-IN",
+                        {
+                          day: "numeric",
+                          month: "short",
+                          year: "numeric",
+                        }
+                      )
                       : "Updating Soon"}
                   </p>
                 </Col>
@@ -240,8 +255,8 @@ function Track() {
             ) : (
               <div className="p-3 bg-light rounded mb-3 d-flex flex-column justify-content-center align-items-center">
                 <p className="mb-1 fw-semibold">
-                Your order will be shipped within 2 days. Tracking will
-                appear once the courier updates it.
+                  Your order will be shipped within 2 days. Tracking will
+                  appear once the courier updates it.
                 </p>
 
                 {/* ALWAYS SHOW STATUS */}
@@ -251,7 +266,7 @@ function Track() {
               </div>
             )}
 
-            {tracking?.trackingLink && orderData?.status !== "Cancelled" && (
+            {tracking?.trackingLink && !isPaymentFailed && orderData?.status !== "Cancelled" && orderData?.status !== "Delivered" && (
               <Button
                 variant="outline-primary"
                 size="sm"
@@ -264,24 +279,49 @@ function Track() {
               </Button>
             )}
 
+            {orderData?.status === "Delivered" && (
+              <div className="p-3 bg-light rounded mb-3 d-flex flex-column justify-content-center">
+                <p className="mb-2 fw-semibold text-success">
+                  Order Delivered Successfully!
+                </p>
+
+                <p className="mb-1">
+                  Your order was delivered on{" "}
+                  <strong>
+                    {new Date(orderData.deliveredAt).toLocaleString("en-IN", {
+                      day: "numeric",
+                      month: "long",
+                      year: "numeric",
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    })}
+                  </strong>
+                  .
+                </p>
+
+                <p className="mb-0 text-muted">
+                  We hope you enjoy your purchase. Thank you for shopping with us 😊
+                </p>
+              </div>
+            )}
+
+
             {/* PROGRESS BAR */}
-            {orderData?.status !== "Cancelled" && (
+            {!isPaymentFailed && orderData?.status !== "Cancelled" && (
               <div className="progress-tracker d-flex justify-content-between mb-4">
                 {steps.map((step, index) => (
                   <React.Fragment key={index}>
                     <div
-                      className={`tracker-step ${
-                        index <= statusIndex ? "completed" : ""
-                      }`}
+                      className={`tracker-step ${index <= statusIndex ? "completed" : ""
+                        }`}
                     >
                       <div className="tracker-icon">{step.icon}</div>
                       <p className="tracker-label">{step.label}</p>
                     </div>
                     {index < steps.length - 1 && (
                       <div
-                        className={`progress-line d-none d-md-block ${
-                          index < statusIndex ? "completed" : ""
-                        }`}
+                        className={`progress-line d-none d-md-block ${index < statusIndex ? "completed" : ""
+                          }`}
                       ></div>
                     )}
                   </React.Fragment>

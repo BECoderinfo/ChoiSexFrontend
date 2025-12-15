@@ -89,8 +89,28 @@ async function request(path, options = {}) {
       localStorage.removeItem("accessToken");
       localStorage.removeItem("refreshToken");
       
-      // Redirect to login page
-      if (window.location.pathname !== "/login" && !window.location.pathname.includes("/register")) {
+      // Only redirect to login for protected routes/endpoints
+      // Don't redirect for public routes like home, products, categories
+      // Also don't redirect for auth check endpoints like /user/auth/me
+      const protectedPaths = ['/cart', '/delivery', '/billing', '/orderHistory', '/settings', '/track'];
+      const isProtectedRoute = protectedPaths.some(protectedPath => window.location.pathname.includes(protectedPath));
+      
+      // Auth check endpoint - should not redirect
+      const isAuthCheckEndpoint = path.includes('/user/auth/me');
+      
+      // Only redirect if on a protected route or if the API call was for a protected endpoint
+      // Exclude auth check endpoints from redirect
+      const isProtectedEndpoint = !isAuthCheckEndpoint && (
+        path.includes('/cart') || 
+        path.includes('/order') || 
+        (path.includes('/user/') && !path.includes('/user/auth/me')) ||
+        path.includes('/delivery') ||
+        path.includes('/billing')
+      );
+      
+      if ((isProtectedRoute || isProtectedEndpoint) && 
+          window.location.pathname !== "/login" && 
+          !window.location.pathname.includes("/register")) {
         window.location.href = "/login";
       }
     }

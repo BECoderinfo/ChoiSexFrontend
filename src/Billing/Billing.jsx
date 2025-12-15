@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Container, Row, Col, Card, Table, Form, Button } from "react-bootstrap";
 import "./Billing.css";
 import { useNavigate, useParams } from "react-router-dom";
@@ -9,7 +9,7 @@ import Loader, { useLoadingWithDelay } from "../Loader";
 
 function Billing() {
   const [checkoutData, setCheckoutData] = useState(null);
-  const [paymentMethod, setPaymentMethod] = useState("cod");
+  const [paymentMethod, setPaymentMethod] = useState("razorpay");
   const [deliveryNote, setDeliveryNote] = useState("");
   const [loading, setLoading] = useState(false);
   const [initialLoading, setInitialLoading] = useState(true);
@@ -19,6 +19,7 @@ function Billing() {
   const { enqueueSnackbar } = useSnackbar();
   const { isAuthenticated } = useAuth();
   const [razorpayReady, setRazorpayReady] = useState(false);
+  const failSentRef = useRef(false);
 
 
 
@@ -150,21 +151,63 @@ function Billing() {
                 enqueueSnackbar(verifyRes.message || "Payment verification failed", {
                   variant: "error",
                 });
+                if (!failSentRef.current) {
+                  failSentRef.current = true;
+                  await orderAPI.markPaymentFailed(checkoutData.orderId, {
+                    reason: verifyRes.message || "Payment verification failed",
+                    razorpay_order_id: response.razorpay_order_id,
+                    razorpay_payment_id: response.razorpay_payment_id,
+                  });
+                }
+                navigate("/");
               }
             } catch (err) {
               enqueueSnackbar(err.message || "Payment verification failed", {
                 variant: "error",
               });
+              if (!failSentRef.current) {
+                failSentRef.current = true;
+                orderAPI
+                  .markPaymentFailed(checkoutData.orderId, {
+                    reason: err.message || "Payment verification error",
+                  })
+                  .catch(() => {});
+              }
+              navigate("/");
             }
           },
           modal: {
             ondismiss: () => {
               enqueueSnackbar("Payment cancelled", { variant: "info" });
+              if (!failSentRef.current) {
+                failSentRef.current = true;
+                orderAPI
+                  .markPaymentFailed(checkoutData.orderId, {
+                    reason: "Payment popup dismissed by user",
+                    razorpay_order_id: rpData?.razorpayOrderId,
+                  })
+                  .catch(() => {});
+              }
+              navigate("/");
             },
           },
         };
 
         const razorpay = new window.Razorpay(options);
+        razorpay.on("payment.failed", function (response) {
+          enqueueSnackbar("Payment failed", { variant: "error" });
+          if (!failSentRef.current) {
+            failSentRef.current = true;
+            orderAPI
+              .markPaymentFailed(checkoutData.orderId, {
+                reason: response.error?.description || "Payment failed",
+                razorpay_order_id: response.error?.metadata?.order_id,
+                razorpay_payment_id: response.error?.metadata?.payment_id,
+              })
+              .catch(() => {});
+          }
+          navigate("/");
+        });
         razorpay.open();
       } catch (error) {
         enqueueSnackbar(error.message || "Failed to start payment", { variant: "error" });

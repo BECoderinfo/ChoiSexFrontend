@@ -45,6 +45,14 @@ export function verifyRazorpayPayment(orderId, payload) {
   });
 }
 
+// Mark payment failed/cancelled (Razorpay modal close or payment.failed event)
+export function markPaymentFailed(orderId, payload) {
+  return request(`/orders/${orderId}/payment-failed`, {
+    method: "POST",
+    body: JSON.stringify(payload || {}),
+  });
+}
+
 export function getTracking(orderId) {
   return request(`/order/get-tracking/${orderId}`);
 }
