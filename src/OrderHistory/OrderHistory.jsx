@@ -140,6 +140,9 @@ function OrderHistory() {
                       <strong>Date:</strong> {order.date}
                     </p>
                     <p className="small text-muted mb-0">
+                      <strong>Payment Method:</strong> {order.paymentMethod || "N/A"}
+                    </p>
+                    <p className="small text-muted mb-0">
                       <strong>Shipping Status:</strong>{" "}
                       <span className={`status-badge ${getStatusBadge(order.status).class}`}>
                         {getStatusBadge(order.status).icon}

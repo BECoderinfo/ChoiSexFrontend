@@ -6,6 +6,8 @@ import { useAuth } from "../context/AuthContext";
 import * as orderAPI from "../api/order";
 import { useSnackbar } from "notistack";
 import Loader, { useLoadingWithDelay } from "../Loader";
+import { generateInvoicePDF } from "../utils/invoiceGenerator";
+import { Download } from "lucide-react";
 
 function OrdSummery() {
   const [checkoutData, setCheckoutData] = useState(null);
@@ -99,7 +101,7 @@ function OrdSummery() {
     );
   }
 
-  const { cart, address, totalAmount, date, paymentMethod } = checkoutData;
+  const { cart, address, totalAmount, date, paymentMethod, paymentStatus, status } = checkoutData;
 
   // Total is already GST-inclusive
   const totalInclusive = cart.reduce(
@@ -154,7 +156,30 @@ function OrdSummery() {
                 >
                   Track Your Order
                 </Button>
-               
+                <Button 
+                  variant="outline-primary" 
+                  className="download-invoice-btn"
+                  onClick={async () => {
+                    try {
+                      const invoiceData = {
+                        orderId,
+                        cart,
+                        address,
+                        date,
+                        paymentMethod,
+                        paymentStatus,
+                        status,
+                        totalAmount: totalInclusive
+                      };
+                      await generateInvoicePDF(invoiceData, enqueueSnackbar);
+                    } catch (error) {
+                      console.error("Error generating invoice:", error);
+                    }
+                  }}
+                >
+                  <Download size={18} className="me-2" />
+                  Download Invoice
+                </Button>
               </div>
             </div>
           </Col>

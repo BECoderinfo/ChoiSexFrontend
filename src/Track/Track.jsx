@@ -6,6 +6,7 @@ import {
   Truck,
   Package,
   Link2,
+  Download,
 } from "lucide-react";
 import "./Track.css";
 import { useParams, useSearchParams } from "react-router-dom";
@@ -13,6 +14,7 @@ import { useSnackbar } from "notistack";
 import { useAuth } from "../context/AuthContext";
 import * as orderAPI from "../api/order";
 import Loader, { useLoadingWithDelay } from "../Loader";
+import { generateInvoicePDF } from "../utils/invoiceGenerator";
 
 function Track() {
   const [orderData, setOrderData] = useState(null);
@@ -188,10 +190,42 @@ function Track() {
 
         <Card className="shadow-sm tracking-card">
           <Card.Body className="p-0">
-            {/* ORDER ID */}
-            <p className="fw-semibold small text-muted mb-3">
-              Order ID: <span className="text-dark">{orderId}</span>
-            </p>
+            {/* ORDER ID and Download Invoice Button */}
+            <div className="d-flex justify-content-between align-items-center mb-3 px-3 pt-3">
+              <div>
+                <p className="fw-semibold small text-muted mb-1">
+                  Order ID: <span className="text-dark">{orderId}</span>
+                </p>
+                <p className="small text-muted mb-0">
+                  Payment Method: <span className="text-dark fw-semibold">{orderData?.paymentMethod || "N/A"}</span>
+                </p>
+              </div>
+              <Button 
+                variant="outline-primary" 
+                size="sm"
+                className="download-invoice-btn-track"
+                onClick={async () => {
+                  try {
+                    const invoiceData = {
+                      orderId,
+                      cart,
+                      address,
+                      date: orderData.date || orderData.createdAt || new Date().toISOString(),
+                      paymentMethod: orderData.paymentMethod || "N/A",
+                      paymentStatus: orderData.paymentStatus,
+                      status: orderData.status,
+                      totalAmount: totalInclusive
+                    };
+                    await generateInvoicePDF(invoiceData, enqueueSnackbar);
+                  } catch (error) {
+                    console.error("Error generating invoice:", error);
+                  }
+                }}
+              >
+                <Download size={16} className="me-2" />
+                Download Invoice
+              </Button>
+            </div>
 
             {/* TRACKING INFO OR REFUND MESSAGE */}
             {isPaymentFailed ? (

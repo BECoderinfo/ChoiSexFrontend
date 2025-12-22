@@ -136,6 +136,37 @@
   }
 }
 
+/* Download Invoice Button */
+.download-invoice-btn {
+  border: 2px solid var(--color-primary) !important;
+  color: var(--color-primary) !important;
+  padding: 12px 30px !important;
+  font-weight: 600;
+  font-size: 1rem;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  width: auto;
+  align-self: flex-start;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.download-invoice-btn:hover {
+  background-color: var(--color-primary) !important;
+  color: #fff !important;
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(166, 0, 99, 0.3);
+}
+
+@media (max-width: 768px) {
+  .download-invoice-btn {
+    width: 100%;
+    align-self: center;
+    padding: 14px 30px !important;
+  }
+}
+
 /* ---------- RIGHT SIDE — Order Summary ---------- */
 .receipt-wrapper {
   position: relative;
